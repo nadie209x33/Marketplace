@@ -103,10 +103,17 @@ Actualizacion del estado del pago:
     2) Actualice a TRUE el estado del satus en la tabla Pedidos
     
 
-
+----
+Update
+----
 
 Acualizar info del usuario:
     Solo se puede actualizar nombre y mail
+    
+    
+    
+    Requiere Tablas: Usuario, User_Info y OTP
+    
 
 Eliminar usuario:
 Localizar el ID del usuario y luego cambiar "active" a false
