@@ -1,5 +1,7 @@
 package com.uade.entity;
 
+import java.time.Instant;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,28 +9,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
-@DaTa
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "OTP")
-public class OTP {
+public class Otp {
 
-public OTP(){}
-public OTP(String otp, Timestamp timestamp){
-this.otp = otp;
-This.timestamp = timestamp;
-}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "otp_ID")
+    private int otp_ID;
 
-@Id
-@@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Int otp_ID;
+    @Column(name = "otp")
+    private String otp;
 
-@Column
-private String otp;
+    @Column(nullable = false, name = "timestamp")
+    private Instant timestamp;
 
-@Column(nullable = false)
-private Timestamp timestamp;
+    public Otp(String otp, Instant timestamp){
+    this.otp = otp;
+    this.timestamp = timestamp;
 
+    }
 
 }
