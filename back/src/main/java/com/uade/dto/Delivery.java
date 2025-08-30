@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class Delivery {
+    private final int delvery_ID;
     private final int pago_ID;
     private final String provider;
     private final int address_ID;
