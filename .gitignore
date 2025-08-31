@@ -35,3 +35,4 @@ build/
 db/
 
 *.kate*
+back/src/main/resources/application-local.properties
