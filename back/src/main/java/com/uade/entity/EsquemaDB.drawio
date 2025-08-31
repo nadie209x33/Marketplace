@@ -959,7 +959,7 @@
             <mxRectangle width="30" height="20" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="_Fy6YyGfLcK-jT9HjACc-19" value="imgr_ID INT AUTO INCREMENT" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="_Fy6YyGfLcK-jT9HjACc-17">
+        <mxCell id="_Fy6YyGfLcK-jT9HjACc-19" value="uia_ID INT AUTO INCREMENT" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="_Fy6YyGfLcK-jT9HjACc-17">
           <mxGeometry x="30" width="195" height="20" as="geometry">
             <mxRectangle width="195" height="20" as="alternateBounds" />
           </mxGeometry>
