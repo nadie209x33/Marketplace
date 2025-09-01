@@ -36,4 +36,7 @@ public class Usuario {
     @JoinColumn(name = "otp_ID", referencedColumnName = "otp_ID")
     private Otp otp;
 
+    @OneToOne(cascade= CascadeType.ALL)
+    @JoinColumn(name = "uinfo_ID", referencedColumnName = "uinfo_ID")
+    private UserInfo userInfo;
 }

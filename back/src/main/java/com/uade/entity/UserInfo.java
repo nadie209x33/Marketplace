@@ -24,19 +24,20 @@ public class UserInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer uinfo_ID;
+    @Column(name = "uinfo_ID")
+    private Integer userInfoId;
 
-    @Column (nullable = false)
-    private String first_name; 
+    @Column (name = "first_name", nullable = false)
+    private String firstName; 
 
-    @Column (nullable = false)
-    private String last_name; 
+    @Column (name = "last_name", nullable = false)
+    private String lastName; 
 
     @Column (nullable = false)
     private String mail; 
 
-    @Column (nullable = false)
-    private Boolean confirm_mail; 
+    @Column (name = "confirm_mail", nullable = false)
+    private Boolean confirmMail; 
     
     @ManyToMany(mappedBy = "usersInfo")
     private List<Address> addresses = new ArrayList<>();
