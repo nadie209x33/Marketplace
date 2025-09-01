@@ -1,10 +1,16 @@
 package com.uade.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserAddress {
-    private final int uia_ID;
-    private final int uinfo_ID;
-    private final int address_ID;
+    private Integer uiaId;
+    private Integer uinfoId;
+    private Integer addressId;
 }
