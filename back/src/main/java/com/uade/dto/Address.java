@@ -1,13 +1,22 @@
 package com.uade.dto;
 
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Address {
-    private final int address_ID;
-    private final String postal_code;
-    private final String street;
-    private final String apt;
-    private final String others;
-    private final String name;
+    private Integer addressId;
+    private String postalCode;
+    private String street;
+    private String apt;
+    private String others;
+    private String name;
+    private List<Integer> usersInfoIds;
 }

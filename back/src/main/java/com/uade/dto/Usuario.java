@@ -1,13 +1,19 @@
 package com.uade.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario {
-    private final int user_ID;
-    private final int opt_ID;
-    private final String passkey;
-    private final int aunth_level;
-    private final boolean active;
-    private final int uinfo_ID;
+    private Integer userId;
+    private Integer otpId;
+    private String passkey;
+    private Integer authLevel;
+    private Boolean active;
+    private Integer userInfoId;
 }

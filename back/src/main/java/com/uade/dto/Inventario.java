@@ -1,14 +1,20 @@
 package com.uade.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Inventario {
-    private final int item_ID;
-    private final String description;
-    private final boolean active;
-    private final int quantity;
-    private final int price;
-    private final int cat_ID;
-    private final String name;
+    private Integer itemId;
+    private String description;
+    private Boolean active;
+    private Integer quantity;
+    private Integer price;
+    private Integer catId;
+    private String name;
 }

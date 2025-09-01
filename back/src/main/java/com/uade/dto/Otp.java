@@ -2,11 +2,17 @@ package com.uade.dto;
 
 import java.time.Instant;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Otp {
-    private final int opt_ID;
-    private final String opt;
-    private final Instant timestamp;
+    private Integer otpId;
+    private String otp;
+    private Instant timestamp;
 }

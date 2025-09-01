@@ -1,11 +1,17 @@
 package com.uade.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class List {
-    private final int tlist_ID;
-    private final int list_ID;
-    private final int item_ID;
-    private final int quantity;
+    private Integer tlistId;
+    private Integer listId;
+    private Integer itemId;
+    private Integer quantity;
 }

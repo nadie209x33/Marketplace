@@ -1,10 +1,16 @@
 package com.uade.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Carro {
-    private final int carro_ID;
-    private final int user_ID;
-    private final int list_ID;
+    private Integer carroId;
+    private Integer userId;
+    private Integer listId;
 }

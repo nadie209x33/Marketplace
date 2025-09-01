@@ -1,12 +1,18 @@
 package com.uade.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pedidos {
-    private final int pedido_ID;
-    private final int list_ID;
-    private final int user_ID;
-    private final int delivery_ID;
-    private final boolean status;
+    private Integer pedidoId;
+    private Integer listId;
+    private Integer userId;
+    private Integer deliveryId;
+    private Boolean status;
 }

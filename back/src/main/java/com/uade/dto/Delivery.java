@@ -1,10 +1,16 @@
 package com.uade.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Delivery {
-    private final int delvery_ID;
-    private final String provider;
-    private final int address_ID;
+    private Integer deliveryId;
+    private String provider;
+    private Integer addressId;
 }
