@@ -1,10 +1,16 @@
 package com.uade.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,10 +27,11 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="Address_ID")
     private Integer address_ID;
 
     @Column(name = "postal_code", nullable = false)
-    private String postal_code;
+    private String postalCode;
 
     @Column(name = "street", nullable = false)
     private String street;
@@ -37,6 +44,14 @@ public class Address {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @ManyToMany
+    @JoinTable(
+        name ="User_Address",
+        joinColumns = @JoinColumn(name = "Address_ID"),
+        inverseJoinColumns = @JoinColumn(name = "Uinfo_ID")
+    )
+    private List<UserInfo> usersInfo = new ArrayList<>();
     
 
 }
