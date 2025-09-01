@@ -9,12 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Inventario {
-    private Integer itemId;
-    private String description;
-    private Boolean active;
-    private Integer quantity;
-    private Integer price;
+public class CategoriaDTO {
     private Integer catId;
     private String name;
+    private Integer parentId;
 }

@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Categoria {
-    private Integer catId;
-    private String name;
-    private Integer parentId;
+public class ConfigDTO {
+    private String key;
+    private Integer value;
 }

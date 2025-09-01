@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Config {
-    private String key;
-    private Integer value;
+public class PedidosDTO {
+    private Integer pedidoId;
+    private Integer listId;
+    private Integer userId;
+    private Integer deliveryId;
+    private Boolean status;
 }

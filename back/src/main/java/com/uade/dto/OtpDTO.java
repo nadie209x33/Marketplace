@@ -11,11 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pago {
-    private Integer pagoId;
-    private Integer monto;
-    private String medio;
+public class OtpDTO {
+    private Integer otpId;
+    private String otp;
     private Instant timestamp;
-    private String txId;
-    private Integer pedidoId;
 }
