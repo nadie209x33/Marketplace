@@ -8,21 +8,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Pago")
 public class Pago {
 
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-private int pago_ID;
+private Integer pago_ID;
 
 @Column(nullable = false)
-private int monto;
+private Integer monto;
 
 @Column(nullable = false)
 private String medio;
@@ -31,14 +35,6 @@ private String medio;
 private Instant timestamp;
 
 @Column(nullable = false)
-private int tx_ID;
-
-public Pago(int monto, String medio, Instant timestamp, int tx_ID){
-this.monto = monto;
-this.medio = medio;
-this.timestamp = timestamp;
-this.tx_ID = tx_ID;
-}
-
+private Integer tx_ID;
 
 }

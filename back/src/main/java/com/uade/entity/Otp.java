@@ -8,31 +8,28 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
-@NoArgsConstructor
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "OTP")
 public class Otp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "otp_ID")
-    private int otp_ID;
+    private Integer otp_ID;
 
     @Column(name = "otp")
     private String otp;
 
     @Column(nullable = false, name = "timestamp")
     private Instant timestamp;
-
-    public Otp(String otp, Instant timestamp){
-    this.otp = otp;
-    this.timestamp = timestamp;
-
-    }
 
 }

@@ -3,12 +3,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "Config")
 public class Config {
@@ -18,11 +22,7 @@ public class Config {
     private String key;
 
     @Column(name = "value")
-    private int value;
+    private Integer value;
 
-    public Config(String key, int value){
-        this.key = key;
-        this.value = value;
-    }
 
 }
