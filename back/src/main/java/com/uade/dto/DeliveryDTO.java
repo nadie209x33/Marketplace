@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListaDeEspera {
-    private Integer ldeId;
-    private Integer userId;
-    private Integer itemId;
+public class DeliveryDTO {
+    private Integer deliveryId;
+    private String provider;
+    private Integer addressId;
 }

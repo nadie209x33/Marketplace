@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Image {
-    private Integer imgId;
-    private String uri;
+public class ListDTO {
+    private Integer tlistId;
+    private Integer listId;
+    private Integer itemId;
+    private Integer quantity;
 }

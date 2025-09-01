@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class List {
-    private Integer tlistId;
+public class CarroDTO {
+    private Integer carroId;
+    private Integer userId;
     private Integer listId;
-    private Integer itemId;
-    private Integer quantity;
 }
