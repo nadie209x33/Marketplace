@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAddress {
+public class UserAddressDTO {
     private Integer uiaId;
     private Integer uinfoId;
     private Integer addressId;

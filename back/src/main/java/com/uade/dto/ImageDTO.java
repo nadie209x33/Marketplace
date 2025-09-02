@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Delivery {
-    private Integer deliveryId;
-    private String provider;
-    private Integer addressId;
+public class ImageDTO {
+    private Integer imgId;
+    private String uri;
 }

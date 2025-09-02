@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Carro {
-    private Integer carroId;
+public class UsuarioDTO {
     private Integer userId;
-    private Integer listId;
+    private Integer otpId;
+    private String passkey;
+    private Integer authLevel;
+    private Boolean active;
+    private Integer userInfoId;
 }

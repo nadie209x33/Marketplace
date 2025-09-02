@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
-    private Integer userId;
-    private Integer otpId;
-    private String passkey;
-    private Integer authLevel;
+public class InventarioDTO {
+    private Integer itemId;
+    private String description;
     private Boolean active;
-    private Integer userInfoId;
+    private Integer quantity;
+    private Integer price;
+    private Integer catId;
+    private String name;
 }
