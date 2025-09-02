@@ -22,7 +22,7 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="img_ID")
-    private Integer imgID;
+    private Integer imgId;
 
     @Column (nullable = false, name = "URI")
     private String uri;

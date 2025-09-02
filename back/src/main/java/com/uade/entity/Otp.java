@@ -24,7 +24,7 @@ public class Otp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "otp_ID")
-    private Integer otp_ID;
+    private Integer otpId;
 
     @Column(name = "otp")
     private String otp;

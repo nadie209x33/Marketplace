@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,21 +18,25 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Pedidos")
-public class Pedidos {
+@Table(name = "Pedido")
+public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pedidos_ID")
-    private Integer pedidosID;
+    @Column(name = "pedido_ID")
+    private Integer pedidoId;
 
-    //TODO implementar list_ID
+    @Column(name = "list_ID")
+    private Integer listId;
 
-    //TODO implementar user_ID
+    @ManyToOne
+    @JoinColumn(name = "user_ID", referencedColumnName = "user_ID")
+    private Usuario usuario;
 
-    //TODO implementar delivery_ID
+    @ManyToOne
+    @JoinColumn(name = "delivery_ID", referencedColumnName = "delivery_ID")
+    private Delivery delivery;
 
     @Column(nullable = false, name = "status")
-    private Boolean status;
-
+    private String status;
 }
