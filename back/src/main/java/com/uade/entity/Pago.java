@@ -23,18 +23,21 @@ public class Pago {
 
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-private Integer pago_ID;
+@Column(name = "pago_ID")
+private Integer pagoID;
 
-@Column(nullable = false)
+@Column(nullable = false, name = "monto")
 private Integer monto;
 
-@Column(nullable = false)
+@Column(nullable = false, name = "medio")
 private String medio;
 
-@Column(nullable = false)
+@Column(nullable = false, name = "timestamp")
 private Instant timestamp;
 
-@Column(nullable = false)
-private Integer tx_ID;
+@Column(nullable = false, name = "TX_ID")
+private Integer txID;
+
+// TODO tabla relacional 
 
 }
