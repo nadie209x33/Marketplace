@@ -24,7 +24,7 @@ public class UserService {
     private final UserInfoRepository userInfoRepository;
     private final OTPRepository otpRepository;
 
-    private static String otpGen(int n) {
+    private String otpGen(int n) {
 
         String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         SecureRandom random = new SecureRandom();
@@ -40,28 +40,27 @@ public class UserService {
 
     @Transactional
     public UsuarioNuevoDTO crearNuevoUsuario(UsuarioNuevoDTO info){
-
-        Usuario nuevoUsuario = new Usuario();
-        UserInfo nuevoUsuarioInfo = new UserInfo(); 
-        Otp nuevoOtp = new Otp();
         
-        nuevoUsuarioInfo.builder().confirm_mail(false)
-        .first_name(info.getFirstName())
-        .last_name(info.getLastName()).mail(info.getMail()).build();
+        UserInfo nuevoUsuarioInfo = UserInfo.builder()
+        .confirmMail(false)
+        .firstName(info.getFirstName())
+        .lastName(info.getLastName()).mail(info.getMail()).build();
 
-        
         UserInfo midui = userInfoRepository.save(nuevoUsuarioInfo);
 
-        nuevoOtp.builder().otp(this.otpGen(8)).timestamp(Instant.now()).build();
+        Otp nuevoOtp = Otp.builder().otp(this.otpGen(8)).timestamp(Instant.now()).build();
 
         Otp midotp = otpRepository.save(nuevoOtp);
 
-        nuevoUsuario.builder()
+        Usuario nuevoUsuario = Usuario.builder()
         .passkey(info.getPasskey())
         .otp(midotp)
         .authLevel(0)
         .active(true)
-        .userInfo(midui);
+        .userInfo(midui)
+        .build();
+
+        usuarioRepository.save(nuevoUsuario);
 
         return info;
 
