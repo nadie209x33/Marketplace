@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +26,7 @@ public class Pago {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 @Column(name = "pago_ID")
-private Integer pagoID;
+private Integer pagoId;
 
 @Column(nullable = false, name = "monto")
 private Integer monto;
@@ -36,8 +38,13 @@ private String medio;
 private Instant timestamp;
 
 @Column(nullable = false, name = "TX_ID")
-private Integer txID;
+private Integer txId;
 
-// TODO tabla relacional 
+    @Column(name = "status")
+    private String status;
+
+    @OneToOne
+    @JoinColumn(name = "pedido_ID", referencedColumnName = "pedido_ID")
+    private Pedido pedido;
 
 }
