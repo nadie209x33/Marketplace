@@ -11,19 +11,27 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.uade.tpo.demo.repository.UserRepository;
+import com.uade.repository.UserInfoRepository;
+import com.uade.repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final UserRepository repository;
+    
+    private final UserInfoRepository userInfoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        return username -> {
+            var userInfo = userInfoRepository.findByMail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+            return usuarioRepository.findByUserInfo_UserInfoId(userInfo.getUserInfoId())
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        };
     }
 
     @Bean

@@ -65,7 +65,7 @@ public class AuthenticationService {
         Usuario nuevoUsuario = Usuario.builder()
         .passkey(passwordEncoder.encode(info.getPasskey()))
         .otp(midotp)
-        .authLevel(0)
+        .authLevel(com.uade.entity.Role.USER)
         .active(true)
         .userInfo(midui)
         .build();
@@ -84,10 +84,11 @@ public class AuthenticationService {
                                                 request.getEmail(),
                                                 request.getPassword()));
 
-                var userIID = userInfoRepository.findByMail(request.getEmail())
+                var userInfo = userInfoRepository.findByMail(request.getEmail())
                                 .orElseThrow();
 
-                var user = usuarioRepository.findByuinfo_ID(userIID.getUserInfoId());
+                var user = usuarioRepository.findByUserInfo_UserInfoId(userInfo.getUserInfoId())
+                                .orElseThrow();
 
                 var jwtToken = jwtService.generateToken(user);
                 return AuthenticationResponse.builder()

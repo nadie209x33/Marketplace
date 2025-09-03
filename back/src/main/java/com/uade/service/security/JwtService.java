@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.uade.entity.Usuario;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -24,18 +22,18 @@ public class JwtService {
     private long jwtExpiration;
 
     public String generateToken(
-            Usuario userDetails) {
+            UserDetails userDetails) {
         return buildToken(userDetails, jwtExpiration);
     }
 
     private String buildToken(
-            Usuario userDetails,
+            UserDetails userDetails,
             long expiration) {
         return Jwts
                 .builder()
-                .subject(userDetails.getUser_ID().toString())
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .claim("Gisele", 1234567)
+                .claim("authorities", userDetails.getAuthorities())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSecretKey())
                 .compact();

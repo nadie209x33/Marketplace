@@ -1,4 +1,4 @@
-package com.uade.security.auth;
+package com.uade.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.uade.dto.auth.AuthenticationRequest;
+import com.uade.dto.auth.AuthenticationResponse;
+import com.uade.dto.user.NewUserDTO;
+import com.uade.service.security.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,11 +18,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final AuthenticationServic service;
+    private final AuthenticationService service;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request) {
+            @RequestBody NewUserDTO request) {
         return ResponseEntity.ok(service.register(request));
     }
 

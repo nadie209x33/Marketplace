@@ -11,8 +11,6 @@ import com.uade.entity.Usuario;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
  
-    Optional<Usuario> findByUserId(Integer user_ID);
-    
-    Usuario findByuinfoId(Integer user_ID);
+    Optional<Usuario> findByUserInfo_UserInfoId(Integer userInfoId);
 
 }

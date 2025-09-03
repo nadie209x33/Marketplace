@@ -55,7 +55,7 @@ public class UserService {
         Usuario nuevoUsuario = Usuario.builder()
         .passkey(info.getPasskey())
         .otp(midotp)
-        .authLevel(0)
+        .authLevel(com.uade.entity.Role.USER)
         .active(true)
         .userInfo(midui)
         .build();
