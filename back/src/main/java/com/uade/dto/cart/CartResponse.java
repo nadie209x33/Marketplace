@@ -1,4 +1,6 @@
-package com.uade.dto;
+package com.uade.dto.cart;
+
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioNuevoDTO {
-    private String firstName;
-    private String lastName;
-    private String mail;
-    private String passkey;
+public class CartResponse {
+    private Integer id;
+    private List<CartItem> items;
+    private Integer total;
+
 }

@@ -6,7 +6,7 @@ import java.time.Instant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.uade.dto.UsuarioNuevoDTO;
+import com.uade.dto.user.NewUserDTO;
 import com.uade.entity.Otp;
 import com.uade.entity.UserInfo;
 import com.uade.entity.Usuario;
@@ -39,7 +39,7 @@ public class UserService {
 
 
     @Transactional
-    public UsuarioNuevoDTO crearNuevoUsuario(UsuarioNuevoDTO info){
+    public NewUserDTO crearNuevoUsuario(NewUserDTO info){
         
         UserInfo nuevoUsuarioInfo = UserInfo.builder()
         .confirmMail(false)
