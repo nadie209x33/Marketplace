@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateItemRequest {
 
+    private Integer userId;
     private Integer quantity;
 
 }
