@@ -5,13 +5,16 @@ import java.util.Date;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.uade.entity.Usuario;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Service
 public class JwtService {
@@ -21,16 +24,16 @@ public class JwtService {
     private long jwtExpiration;
 
     public String generateToken(
-            UserDetails userDetails) {
+            Usuario userDetails) {
         return buildToken(userDetails, jwtExpiration);
     }
 
     private String buildToken(
-            UserDetails userDetails,
+            Usuario userDetails,
             long expiration) {
         return Jwts
                 .builder()
-                .subject(userDetails.getUsername()) // prueba@hotmail.com
+                .subject(userDetails.getUser_ID().toString())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .claim("Gisele", 1234567)
                 .expiration(new Date(System.currentTimeMillis() + expiration))

@@ -1,9 +1,7 @@
 package com.uade.service.cart;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.uade.dto.cart.CartItem;
 import com.uade.repository.CarritoRepository;
 import com.uade.repository.ListRepository;
 import com.uade.repository.UsuarioRepository;
@@ -18,14 +16,14 @@ public class CartService {
     private final UsuarioRepository usuarioRepository;
     private final ListRepository listRepository;
 
-    @Transactional
-    public getCurrentCart (Integer userId){
+  //  @Transactional
+ //   public getCurrentCart (Integer userId){
 
-        private Integer listID = carritoRepository.findByUser(user)
+        //private Integer listID = carritoRepository.findByUser(user);
 
 
 
-    }
+  //  }
     
 
 
