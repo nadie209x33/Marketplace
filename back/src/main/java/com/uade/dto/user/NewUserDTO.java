@@ -1,4 +1,4 @@
-package com.uade.dto;
+package com.uade.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioNuevoDTO {
+public class NewUserDTO {
     private String firstName;
     private String lastName;
     private String mail;

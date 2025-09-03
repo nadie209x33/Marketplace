@@ -1,7 +1,5 @@
 package com.uade.dto.cart;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartResponse {
+public class CartItem {
     private Integer id;
-    private List<CartItem> items;
-    private Integer total;
+    private String name;
+    private Integer quantity;
+    private Integer price;
+    private Integer linetotal;
 
 }
