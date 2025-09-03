@@ -14,6 +14,5 @@ public class CartItem {
     private String name;
     private Integer quantity;
     private Integer price;
-    private Integer linetotal;
-
+    private Integer lineTotal;
 }

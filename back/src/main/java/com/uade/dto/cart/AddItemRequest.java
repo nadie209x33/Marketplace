@@ -1,3 +1,18 @@
 package com.uade.dto.cart;
 
-public record AddItemRequest(Long productId, Integer quantity) {}
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class AddItemRequest{
+
+    private Integer productId;
+    private Integer quantity;
+
+}
+

@@ -1,3 +1,17 @@
 package com.uade.dto.cart;
 
-public record UpdateItemRequest(Integer quantity) {}
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateItemRequest {
+
+    private Integer quantity;
+
+}
