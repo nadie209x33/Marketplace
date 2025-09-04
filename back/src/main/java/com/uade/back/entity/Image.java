@@ -1,5 +1,7 @@
 package com.uade.back.entity;
 
+import java.sql.Blob;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,5 +27,5 @@ public class Image {
     private Integer imgId;
 
     @Column (nullable = false, name = "URI")
-    private String uri;
+    private Blob image;
 }
