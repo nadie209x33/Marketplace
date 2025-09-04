@@ -26,8 +26,6 @@ public class ListaDeEspera {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LDE_ID")
-    private Integer lDEID;
-
     private Integer ldeId;
 
     @ManyToOne

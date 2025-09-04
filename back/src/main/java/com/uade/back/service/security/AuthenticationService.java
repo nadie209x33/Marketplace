@@ -3,12 +3,14 @@ package com.uade.back.service.security;
 import java.security.SecureRandom;
 import java.time.Instant;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.uade.back.dto.auth.AuthenticationRequest;
 import com.uade.back.dto.auth.AuthenticationResponse;
@@ -48,35 +50,36 @@ public class AuthenticationService {
         return otp.toString();
         }
 
+        @Transactional
         public AuthenticationResponse register(NewUserDTO info) {
 
                 
                 UserInfo nuevoUsuarioInfo = UserInfo.builder()
-        .confirmMail(false)
-        .firstName(info.getFirstName())
-        .lastName(info.getLastName()).mail(info.getMail()).build();
+                .confirmMail(false)
+                .firstName(info.getFirstName())
+                .lastName(info.getLastName()).mail(info.getMail()).build();
 
-        UserInfo midui = userInfoRepository.save(nuevoUsuarioInfo);
+                UserInfo midui = userInfoRepository.save(nuevoUsuarioInfo);
 
-        Otp nuevoOtp = Otp.builder().otp(this.otpGen(8)).timestamp(Instant.now()).build();
+                Otp nuevoOtp = Otp.builder().otp(this.otpGen(8)).timestamp(Instant.now()).build();
 
-        Otp midotp = otpRepository.save(nuevoOtp);
+                Otp midotp = otpRepository.save(nuevoOtp);
 
-        Usuario nuevoUsuario = Usuario.builder()
-        .passkey(passwordEncoder.encode(info.getPasskey()))
-        .otp(midotp)
-        .authLevel(com.uade.back.entity.Role.USER)
-        .active(true)
-        .userInfo(midui)
-        .build();
+                Usuario nuevoUsuario = Usuario.builder()
+                .passkey(passwordEncoder.encode(info.getPasskey()))
+                .otp(midotp)
+                .authLevel(com.uade.back.entity.Role.USER)
+                .active(true)
+                .userInfo(midui)
+                .build();
 
-        usuarioRepository.save(nuevoUsuario);
+                usuarioRepository.save(nuevoUsuario);
 
                 var jwtToken = jwtService.generateToken(nuevoUsuario);
                 return AuthenticationResponse.builder()
                                 .accessToken(jwtToken)
                                 .build();
-        }
+                }
 
         public AuthenticationResponse authenticate(AuthenticationRequest request) {
                 authenticationManager.authenticate(

@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 public class Config {
 
     @Id
-    @Column(name = "key")
-    private String key;
+    @Column(name = "configKey")
+    private String configKey;
 
     @Column(name = "value")
     private Integer value;

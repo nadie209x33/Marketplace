@@ -61,7 +61,7 @@ public class Inventario {
     private List<ListaDeEspera> listaDeEspera;
 
     @OneToMany(mappedBy = "item")
-    private List<List> listItems;
+    private java.util.List<com.uade.back.entity.List> listItems;
 }
     
 
