@@ -1,3 +1,21 @@
 package com.uade.back.dto.catalog;
 
-public record ProductResponse(Long id, String name, String description, Double price, Long categoryId, Integer stock) {}
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductResponse {
+
+    private Long id;
+    private String name;
+    private String description;
+    private Double price;
+    private Long categoryId;
+    private Integer stock;
+
+}

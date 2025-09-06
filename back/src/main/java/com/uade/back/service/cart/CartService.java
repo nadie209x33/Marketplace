@@ -61,10 +61,11 @@ public class CartService {
             item.setQuantity(item.getQuantity() + request.getQuantity());
             listRepository.save(item);
         } else {
-            List newItem = new List();
-            newItem.setListId(cart.getList().getListId());
-            newItem.setItem(productInventory.get());
-            newItem.setQuantity(request.getQuantity());
+            List newItem = List.builder()
+            .listId(cart.getList().getListId())
+            .item(productInventory.get())
+            .quantity(request.getQuantity()).build();
+
             listRepository.save(newItem);
         }
 

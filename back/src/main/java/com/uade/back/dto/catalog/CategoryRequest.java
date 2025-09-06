@@ -1,3 +1,16 @@
 package com.uade.back.dto.catalog;
 
-public record CategoryRequest(String name, Long parentId) {}
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class CategoryRequest{
+
+    private String name;
+    private Long parentId;
+}
