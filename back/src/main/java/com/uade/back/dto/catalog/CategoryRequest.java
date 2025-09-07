@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class CategoryRequest{
 
     private String name;
-    private Long parentId;
+    private Integer parentId;
 }
