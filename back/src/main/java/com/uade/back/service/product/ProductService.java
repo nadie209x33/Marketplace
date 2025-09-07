@@ -57,4 +57,37 @@ public class ProductService {
                 .stock(saved.getQuantity())
                 .build();
     }
+
+    @Transactional
+    public ProductResponse update(Integer id, ProductRequest request){
+
+        Inventario inventario = inventarioRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        Categoria categoria = categoriaRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+        inventario.setName(request.getName());
+        inventario.setDescription(request.getDescription());
+        inventario.setPrice(request.getPrice());
+        inventario.setQuantity(request.getStock());
+        inventario.setCategoria(categoria);
+
+        Inventario actualizado = inventarioRepository.save(inventario);
+
+        return ProductResponse.builder()
+                .id(actualizado.getItemId())
+                .name(actualizado.getName())
+                .description(actualizado.getDescription())
+                .price(actualizado.getPrice())
+                .category(actualizado.getCategoria().getCatId())
+                .stock(actualizado.getQuantity())
+                .build();
+    }
+
+    @Transactional
+        public void delete(Integer id){
+            Inventario inventario = inventarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("El producto no existe"));
+            inventarioRepository.delete(inventario);
+        }  
 }
