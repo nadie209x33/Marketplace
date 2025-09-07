@@ -14,7 +14,7 @@ public class InventarioDTO {
     private String description;
     private Boolean active;
     private Integer quantity;
-    private Integer price;
+    private double price;
     private Integer catId;
     private String name;
 }

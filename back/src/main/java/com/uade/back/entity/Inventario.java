@@ -40,7 +40,7 @@ public class Inventario {
     private Integer quantity;
 
     @Column(name = "price" )
-    private Integer price;
+    private double price;
 
     @Column (nullable = false, name = "name")
     private String name;
