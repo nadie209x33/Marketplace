@@ -35,7 +35,11 @@ public class CartService {
         return usuarioRepository.findByUserInfo_Mail(username)
                 .orElseThrow();
     }
-
+//  @transactional
+//  public list<ProductResponse> search{
+//  -----------------logica----------------
+//  return
+//}
     @Transactional
     public CartResponse getCurrentCart() {
         Usuario user = getCurrentUser();
