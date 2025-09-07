@@ -4,7 +4,11 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.uade.back.dto.catalog.*;
+import com.uade.back.dto.catalog.ProductIdRequest;
+import com.uade.back.dto.catalog.ProductRequest;
+import com.uade.back.dto.catalog.ProductResponse;
+import com.uade.back.dto.catalog.ProductSearchRequest;
+import com.uade.back.dto.catalog.ProductUpdateRequest;
 import com.uade.back.service.catalog.ProductService;
 
 import lombok.RequiredArgsConstructor;

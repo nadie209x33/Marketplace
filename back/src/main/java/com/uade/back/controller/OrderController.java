@@ -4,7 +4,10 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.uade.back.dto.order.*;
+import com.uade.back.dto.order.CreateOrderRequest;
+import com.uade.back.dto.order.OrderIdRequest;
+import com.uade.back.dto.order.OrderListRequest;
+import com.uade.back.dto.order.OrderResponse;
 import com.uade.back.service.order.OrderService;
 
 import lombok.RequiredArgsConstructor;
