@@ -16,5 +16,5 @@ public class CategoryRequest{
     @NotBlank(message = "La categoria necesita un nombre")
     private String name;
     @NotNull(message = "Si la categoria no tiene padre use '0'")
-    private Long parentId;
+    private Integer parentId;
 }
