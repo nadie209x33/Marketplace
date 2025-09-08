@@ -1,6 +1,5 @@
 package com.uade.back.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.back.dto.address.AddressDto;
+import com.uade.back.dto.address.CreateAddressRequest;
 import com.uade.back.service.address.AddressService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,28 +26,28 @@ public class AddressController {
     private final AddressService addressService;
 
     @PostMapping
-    public ResponseEntity<AddressDto> createAddress(@RequestBody AddressDto addressDto, Principal principal) {
-        return ResponseEntity.ok(addressService.createAddress(addressDto, principal.getName()));
+    public ResponseEntity<AddressDto> createAddress(@RequestBody CreateAddressRequest addressRequest) {
+        return ResponseEntity.ok(addressService.createAddress(addressRequest));
     }
 
     @GetMapping
-    public ResponseEntity<List<AddressDto>> getAddresses(Principal principal) {
-        return ResponseEntity.ok(addressService.getAddressesByUserName(principal.getName()));
+    public ResponseEntity<List<AddressDto>> getAddresses() {
+        return ResponseEntity.ok(addressService.getAddresses());
     }
 
     @GetMapping("/{addressId}")
-    public ResponseEntity<AddressDto> getAddressById(@PathVariable Integer addressId, Principal principal) {
-        return ResponseEntity.ok(addressService.getAddressById(addressId, principal.getName()));
+    public ResponseEntity<AddressDto> getAddressById(@PathVariable Integer addressId) {
+        return ResponseEntity.ok(addressService.getAddressById(addressId));
     }
 
     @PutMapping("/{addressId}")
-    public ResponseEntity<AddressDto> updateAddress(@PathVariable Integer addressId, @RequestBody AddressDto addressDto, Principal principal) {
-        return ResponseEntity.ok(addressService.updateAddress(addressId, addressDto, principal.getName()));
+    public ResponseEntity<AddressDto> updateAddress(@PathVariable Integer addressId, @RequestBody CreateAddressRequest addressRequest) {
+        return ResponseEntity.ok(addressService.updateAddress(addressId, addressRequest));
     }
 
     @DeleteMapping("/{addressId}")
-    public ResponseEntity<Void> deleteAddress(@PathVariable Integer addressId, Principal principal) {
-        addressService.deleteAddress(addressId, principal.getName());
+    public ResponseEntity<Void> deleteAddress(@PathVariable Integer addressId) {
+        addressService.deleteAddress(addressId);
         return ResponseEntity.noContent().build();
     }
 }
