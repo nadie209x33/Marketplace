@@ -28,10 +28,10 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> search(
-        @RequestParam(required = false) Long categoryId,
+        @RequestParam(required = false) Integer categoryId,
         @RequestParam(required = false) String q,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "20") int size) {
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(defaultValue = "20") Integer size) {
         return ResponseEntity.ok(service.search(categoryId, q, page, size));
     }
 

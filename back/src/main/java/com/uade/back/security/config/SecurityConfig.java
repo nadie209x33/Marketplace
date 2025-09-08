@@ -27,9 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req
-                
-                .requestMatchers("/api/v1/auth/**").permitAll()
+                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
@@ -39,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/images/**").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/images/**").hasAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/users/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/addresses/**").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers("/categories/**").hasAnyAuthority(Role.USER.name())
                         .anyRequest()
                         .authenticated())

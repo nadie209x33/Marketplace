@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class CartResponse {
     private Integer id;
     private List<CartItem> items;
-    private Integer total;
+    private Double total;
 }

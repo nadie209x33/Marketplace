@@ -18,5 +18,5 @@ public interface InventarioRepository extends JpaRepository<Inventario, Integer>
     @Query("SELECT i FROM Inventario i WHERE " +
            "(:categoryId IS NULL OR i.categoria.catId = :categoryId) AND " +
            "(:q IS NULL OR LOWER(i.name) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :q, '%')))")
-    Page<Inventario> search(@Param("categoryId") Long categoryId, @Param("q") String q, Pageable pageable);
+    Page<Inventario> search(@Param("categoryId") Integer categoryId, @Param("q") String q, Pageable pageable);
 }

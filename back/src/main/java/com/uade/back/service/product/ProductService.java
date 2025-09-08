@@ -24,7 +24,7 @@ public class ProductService {
     private final CategoriaRepository categoriaRepository;
 
     @Transactional(readOnly = true)
-    public List<ProductResponse> search(Long categoryId, String q, int page, int size) {
+    public List<ProductResponse> search(Integer categoryId, String q, int page, int size) {
         Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
         Page<Inventario> results = inventarioRepository.search(categoryId, q, pageable);
         return results.getContent().stream()

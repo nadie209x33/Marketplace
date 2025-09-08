@@ -76,7 +76,7 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponse updateItem(Long itemId, UpdateItemRequest request) {
+    public CartResponse updateItem(Integer itemId, UpdateItemRequest request) {
         if (request.getQuantity() != null && request.getQuantity() == 0) {
             return removeItem(itemId);
         }
@@ -85,7 +85,7 @@ public class CartService {
         Carro cart = getOrCreateCart(user);
 
         com.uade.back.entity.List itemToUpdate = cart.getItems().stream()
-            .filter(item -> item.getTlistId().equals(itemId.intValue()))
+            .filter(item -> item.getTlistId().equals(itemId))
             .findFirst()
             .orElseThrow(() -> new RuntimeException("Item not found in cart"));
 
@@ -100,11 +100,11 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponse removeItem(Long itemId) {
+    public CartResponse removeItem(Integer itemId) {
         Usuario user = getCurrentUser();
         Carro cart = getOrCreateCart(user);
         
-        cart.getItems().removeIf(item -> item.getTlistId().equals(itemId.intValue()));
+        cart.getItems().removeIf(item -> item.getTlistId().equals(itemId));
         carritoRepository.save(cart);
 
         return createCartResponse(cart);
@@ -133,7 +133,7 @@ public class CartService {
             return CartResponse.builder()
                 .id(cart.getCarro_ID())
                 .items(Collections.emptyList())
-                .total(0)
+                .total(Double.valueOf(0))
                 .build();
         }
 
@@ -156,7 +156,7 @@ public class CartService {
         return CartResponse.builder()
             .id(cart.getCarro_ID())
             .items(cartItems)
-            .total(totalPrice.intValue())
+            .total(totalPrice)
             .build();
     }
 }
