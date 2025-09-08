@@ -23,8 +23,8 @@ public class Config {
     @Column(name = "configKey")
     private String configKey;
 
-    @Column(name = "value")
-    private Integer value;
+    @Column(name = "configValue")
+    private Integer configValue;
 
 
 }

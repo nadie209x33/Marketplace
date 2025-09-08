@@ -55,22 +55,23 @@ public class CartService {
             throw new RuntimeException("Insufficient stock for product: " + productInventory.getName());
         }
 
-        com.uade.back.entity.List existingItem = listRepository
-                .findByListIdAndItem(cart.getList().getListId(), productInventory)
+        com.uade.back.entity.List existingItem = cart.getItems().stream()
+                .filter(item -> item.getItem().equals(productInventory))
+                .findFirst()
                 .orElse(null);
 
         if (existingItem != null) {
             existingItem.setQuantity(existingItem.getQuantity() + request.getQuantity());
-            listRepository.save(existingItem);
         } else {
             com.uade.back.entity.List newItem = com.uade.back.entity.List.builder()
-                .listId(cart.getList().getListId())
                 .item(productInventory)
                 .quantity(request.getQuantity())
+                .carro(cart)
                 .build();
-            listRepository.save(newItem);
+            cart.getItems().add(newItem);
         }
-
+        
+        carritoRepository.save(cart);
         return createCartResponse(cart);
     }
 
@@ -83,19 +84,17 @@ public class CartService {
         Usuario user = getCurrentUser();
         Carro cart = getOrCreateCart(user);
 
-        com.uade.back.entity.List itemToUpdate = listRepository.findById(itemId.intValue())
+        com.uade.back.entity.List itemToUpdate = cart.getItems().stream()
+            .filter(item -> item.getTlistId().equals(itemId.intValue()))
+            .findFirst()
             .orElseThrow(() -> new RuntimeException("Item not found in cart"));
-
-        if (!itemToUpdate.getListId().equals(cart.getList().getListId())) {
-            throw new RuntimeException("Item does not belong to the current user's cart.");
-        }
 
         if (itemToUpdate.getItem().getQuantity() < request.getQuantity()) {
             throw new RuntimeException("Insufficient stock");
         }
 
         itemToUpdate.setQuantity(request.getQuantity());
-        listRepository.save(itemToUpdate);
+        carritoRepository.save(cart);
 
         return createCartResponse(cart);
     }
@@ -105,14 +104,8 @@ public class CartService {
         Usuario user = getCurrentUser();
         Carro cart = getOrCreateCart(user);
         
-        com.uade.back.entity.List itemToRemove = listRepository.findById(itemId.intValue())
-            .orElseThrow(() -> new RuntimeException("Item not found in cart"));
-
-        if (!itemToRemove.getListId().equals(cart.getList().getListId())) {
-            throw new RuntimeException("Item does not belong to the current user's cart.");
-        }
-
-        listRepository.deleteById(itemId.intValue());
+        cart.getItems().removeIf(item -> item.getTlistId().equals(itemId.intValue()));
+        carritoRepository.save(cart);
 
         return createCartResponse(cart);
     }
@@ -121,35 +114,22 @@ public class CartService {
     public CartResponse clear() {
         Usuario user = getCurrentUser();
         Carro cart = getOrCreateCart(user);
-        if (cart.getList() != null && cart.getList().getListId() != null) {
-            listRepository.deleteAllByListId(cart.getList().getListId());
-        }
+        cart.getItems().clear();
+        carritoRepository.save(cart);
         return createCartResponse(cart);
     }
     
     private Carro getOrCreateCart(Usuario user) {
         return carritoRepository.findByUser(user).stream().findFirst().orElseGet(() -> {
-
-            
-            com.uade.back.entity.List newList = new com.uade.back.entity.List();
-            newList.setQuantity(0);
-            com.uade.back.entity.List savedList = listRepository.save(newList); 
-
-            
-            savedList.setListId(savedList.getTlistId());
-            listRepository.save(savedList);
-
-            
             Carro newCart = Carro.builder()
                 .user(user)
-                .list(savedList)
                 .build();
             return carritoRepository.save(newCart);
         });
     }
 
     private CartResponse createCartResponse(Carro cart) {
-        if (cart.getList() == null || cart.getList().getListId() == null) {
+        if (cart.getItems() == null || cart.getItems().isEmpty()) {
             return CartResponse.builder()
                 .id(cart.getCarro_ID())
                 .items(Collections.emptyList())
@@ -157,9 +137,7 @@ public class CartService {
                 .build();
         }
 
-        java.util.List<com.uade.back.entity.List> items = listRepository.findAllByListId(cart.getList().getListId());
-        
-        java.util.List<CartItem> cartItems = items.stream()
+        java.util.List<CartItem> cartItems = cart.getItems().stream()
             .filter(item -> item.getItem() != null)
             .map(item -> CartItem.builder()
             .id(item.getTlistId())

@@ -2,6 +2,7 @@ package com.uade.back.service.order;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,6 @@ import com.uade.back.repository.AddressRepository;
 import com.uade.back.repository.CarritoRepository;
 import com.uade.back.repository.DeliveryRepository;
 import com.uade.back.repository.InventarioRepository;
-import com.uade.back.repository.ListRepository;
 import com.uade.back.repository.PagoRepository;
 import com.uade.back.repository.PedidoRepository;
 import com.uade.back.repository.UsuarioRepository;
@@ -35,7 +35,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final UsuarioRepository usuarioRepository;
     private final CarritoRepository carritoRepository;
-    private final ListRepository listRepository;
     private final InventarioRepository inventarioRepository;
     private final AddressRepository addressRepository;
     private final DeliveryRepository deliveryRepository;
@@ -63,10 +62,9 @@ public class OrderServiceImpl implements OrderService {
 
         
                 
-        Integer listId = cart.getList().getListId();
-        java.util.List<com.uade.back.entity.List> cartItems = listRepository.findAllByListId(listId);
+        java.util.List<com.uade.back.entity.List> cartItems = cart.getItems();
         
-        if (cartItems.stream().allMatch(item -> item.getItem() == null)) {
+        if (cartItems.isEmpty()) {
              throw new RuntimeException("Cannot create an order from an empty cart.");
         }
 
@@ -97,10 +95,18 @@ public class OrderServiceImpl implements OrderService {
 
         Pedido newPedido = Pedido.builder()
                 .usuario(user)
-                .listId(listId)
                 .delivery(delivery)
                 .status("PENDIENTE")
                 .build();
+        
+        List<com.uade.back.entity.List> orderItems = cartItems.stream()
+            .map(cartItem -> com.uade.back.entity.List.builder()
+                .item(cartItem.getItem())
+                .quantity(cartItem.getQuantity())
+                .build())
+            .collect(Collectors.toList());
+        newPedido.setItems(orderItems);
+        
         Pedido savedPedido = pedidoRepository.save(newPedido);
 
         
@@ -118,7 +124,8 @@ public class OrderServiceImpl implements OrderService {
 
         
         
-        carritoRepository.delete(cart);
+        cart.getItems().clear();
+        carritoRepository.save(cart);
 
         
         
@@ -126,7 +133,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderResponse toOrderResponse(Pedido pedido, Pago pago) {
-        java.util.List<com.uade.back.entity.List> items = listRepository.findAllByListId(pedido.getListId());
+        java.util.List<com.uade.back.entity.List> items = pedido.getItems();
         
         java.util.List<OrderResponse.Item> responseItems = items.stream()
             .filter(item -> item.getItem() != null)
@@ -190,7 +197,7 @@ public class OrderServiceImpl implements OrderService {
             pedido.setStatus("APROBADO");
 
             
-            java.util.List<com.uade.back.entity.List> items = listRepository.findAllByListId(pedido.getListId());
+            java.util.List<com.uade.back.entity.List> items = pedido.getItems();
             for (com.uade.back.entity.List item : items) {
                  if (item.getItem() == null) continue;
                  Inventario inventario = item.getItem();

@@ -1,12 +1,12 @@
 package com.uade.back.entity;
 
-import jakarta.persistence.ConstraintMode;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +27,7 @@ public class Carro {
     @JoinColumn(name = "user_ID", referencedColumnName = "user_ID")
     private Usuario user;
 
-    @OneToOne
-    @JoinColumn(name = "list_ID", referencedColumnName = "list_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private List list;
+    @OneToMany(mappedBy = "carro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<com.uade.back.entity.List> items = new java.util.ArrayList<>();
 }

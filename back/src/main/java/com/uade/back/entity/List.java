@@ -36,6 +36,10 @@ public class List {
     @JoinColumn(name = "item_ID", referencedColumnName = "item_ID")
     private Inventario item;
 
+    @ManyToOne
+    @JoinColumn(name = "carro_ID", referencedColumnName = "carro_ID")
+    private Carro carro;
+
     @Column (nullable = false, name = "quantity")
     private Integer quantity;
 
