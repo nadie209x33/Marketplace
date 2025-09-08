@@ -1,5 +1,7 @@
 package com.uade.back.dto.catalog;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +19,6 @@ public class ProductResponse {
     private Double price;
     private Integer categoryId;
     private Integer stock;
+    private List<Integer> imageIds;
 
 }

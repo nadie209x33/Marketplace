@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.uade.back.dto.catalog.ProductRequest;
 import com.uade.back.dto.catalog.ProductResponse;
 import com.uade.back.entity.Categoria;
+import com.uade.back.entity.Image;
 import com.uade.back.entity.Inventario;
 import com.uade.back.repository.CategoriaRepository;
 import com.uade.back.repository.InventarioRepository;
@@ -39,6 +40,7 @@ public class ProductService {
                 .price(inventario.getPrice())
                 .categoryId(inventario.getCategoria().getCatId())
                 .stock(inventario.getQuantity())
+                .imageIds(inventario.getImages().stream().map(Image::getImgId).collect(java.util.stream.Collectors.toList()))
                 .build();
     }
 

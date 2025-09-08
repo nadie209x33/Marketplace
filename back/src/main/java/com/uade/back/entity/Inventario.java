@@ -55,7 +55,8 @@ public class Inventario {
         joinColumns = @JoinColumn(name = "item_ID"),
         inverseJoinColumns = @JoinColumn(name = "img_ID")
     )
-    private List<Image> images;
+    @Builder.Default
+    private List<Image> images = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "item")
     private List<ListaDeEspera> listaDeEspera;
@@ -64,4 +65,3 @@ public class Inventario {
     private java.util.List<com.uade.back.entity.List> listItems;
 }
     
-
