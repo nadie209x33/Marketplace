@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.uade.back.dto.catalog.CategoryIdRequest;
+import com.uade.back.dto.catalog.CategoryListRequest;
 import com.uade.back.dto.catalog.CategoryRequest;
 import com.uade.back.dto.catalog.CategoryResponse;
+import com.uade.back.dto.catalog.CategoryUpdateRequest;
+import com.uade.back.service.catalog.CategoryService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,14 +26,14 @@ public class CategoryController {
 
   private final CategoryService service;
 
-  @GetMapping
-  public ResponseEntity<List<CategoryResponse>> list(@RequestParam(required = false) Long parentId) {
-    return ResponseEntity.ok(service.findAll(parentId));
+  @PostMapping("/search")
+  public ResponseEntity<List<CategoryResponse>> list(@RequestBody CategoryListRequest request) {
+    return ResponseEntity.ok(service.findAll(request));
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<CategoryResponse> get(@PathVariable Long id) {
-    return ResponseEntity.ok(service.findById(id));
+  @PostMapping("/by-id")
+  public ResponseEntity<CategoryResponse> get(@RequestBody CategoryIdRequest request) {
+    return ResponseEntity.ok(service.findById(request));
   }
 
   @PostMapping
@@ -37,14 +41,14 @@ public class CategoryController {
     return ResponseEntity.ok(service.create(request));
   }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<CategoryResponse> update(@PathVariable Long id, @RequestBody CategoryRequest request) {
-    return ResponseEntity.ok(service.update(id, request));
+  @PutMapping
+  public ResponseEntity<CategoryResponse> update(@RequestBody CategoryUpdateRequest request) {
+    return ResponseEntity.ok(service.update(request));
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
-    service.delete(id);
+  @DeleteMapping
+  public ResponseEntity<Void> delete(@RequestBody CategoryIdRequest request) {
+    service.delete(request);
     return ResponseEntity.noContent().build();
   }
 }
