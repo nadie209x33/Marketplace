@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddItemRequest{
 
-    private Integer userId;
     private Integer productId;
     private Integer quantity;
 

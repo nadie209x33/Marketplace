@@ -39,5 +39,6 @@ public class UserInfo {
     private Boolean confirmMail; 
     
     @ManyToMany(mappedBy = "usersInfo")
+    @Builder.Default
     private List<Address> addresses = new ArrayList<>();
 }

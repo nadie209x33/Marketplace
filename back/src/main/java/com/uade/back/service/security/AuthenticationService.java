@@ -2,6 +2,8 @@ package com.uade.back.service.security;
 
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.uade.back.dto.auth.AuthenticationRequest;
 import com.uade.back.dto.auth.AuthenticationResponse;
 import com.uade.back.dto.user.NewUserDTO;
+import com.uade.back.dto.user.UpdateUserDTO;
 import com.uade.back.entity.Otp;
 import com.uade.back.entity.UserInfo;
 import com.uade.back.entity.Usuario;
@@ -53,6 +56,10 @@ public class AuthenticationService {
         @Transactional
         public AuthenticationResponse register(NewUserDTO info) {
 
+                Optional<UserInfo> existingUser = userInfoRepository.findByMail(info.getMail());
+                if (existingUser.isPresent()) {
+                    throw new RuntimeException("Email ya registrado.");
+                }
                 
                 UserInfo nuevoUsuarioInfo = UserInfo.builder()
                 .confirmMail(false)
@@ -80,6 +87,82 @@ public class AuthenticationService {
                                 .accessToken(jwtToken)
                                 .build();
                 }
+
+        @Transactional
+        public void activateAccount(Integer userId, String otpIngresado) {
+            Usuario user = usuarioRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            if (user.getUserInfo().getConfirmMail()) {
+                throw new RuntimeException("El correo ya ha sido confirmado.");
+            }
+            
+            Otp otp = user.getOtp();
+            if (otp == null || !otp.getOtp().equals(otpIngresado)) {
+                throw new RuntimeException("OTP inválido.");
+            }
+
+            Instant now = Instant.now();
+            Instant otpTimestamp = otp.getTimestamp();
+            if (otpTimestamp.plus(5, ChronoUnit.MINUTES).isBefore(now)) {
+                throw new RuntimeException("OTP expirado.");
+            }
+
+            UserInfo userInfo = user.getUserInfo();
+            userInfo.setConfirmMail(true);
+            userInfoRepository.save(userInfo);
+
+            user.setOtp(null);
+            usuarioRepository.save(user);
+            otpRepository.delete(otp);
+        }
+
+        @Transactional
+        public void updateUser(Integer userId, UpdateUserDTO request) {
+            Usuario user = usuarioRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            
+            UserInfo userInfo = user.getUserInfo();
+
+            if (request.getFirstName() != null) {
+                userInfo.setFirstName(request.getFirstName());
+            }
+            if (request.getLastName() != null) {
+                userInfo.setLastName(request.getLastName());
+            }
+
+            if (request.getMail() != null && !request.getMail().equals(userInfo.getMail())) {
+               
+                userInfoRepository.findByMail(request.getMail()).ifPresent(u -> {
+                    throw new RuntimeException("El nuevo email ya está en uso.");
+                });
+                
+                userInfo.setMail(request.getMail());
+                userInfo.setConfirmMail(false);
+
+                
+                if (user.getOtp() != null) {
+                    otpRepository.delete(user.getOtp());
+                }
+
+               
+                Otp newOtp = Otp.builder().otp(this.otpGen(8)).timestamp(Instant.now()).build();
+                Otp savedOtp = otpRepository.save(newOtp);
+                user.setOtp(savedOtp);
+                usuarioRepository.save(user);
+            }
+            
+            userInfoRepository.save(userInfo);
+        }
+
+        @Transactional
+        public void deleteUser(Integer userId) {
+            Usuario user = usuarioRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            
+            user.setActive(false);
+            usuarioRepository.save(user);
+        }
 
         public AuthenticationResponse authenticate(AuthenticationRequest request) {
                 authenticationManager.authenticate(

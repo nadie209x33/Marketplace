@@ -1,21 +1,21 @@
 package com.uade.back.controller;
 
 import java.util.List;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-<<<<<<< HEAD
-import com.uade.back.dto.catalog.ProductIdRequest;
-import com.uade.back.dto.catalog.ProductRequest;
-import com.uade.back.dto.catalog.ProductResponse;
-import com.uade.back.dto.catalog.ProductSearchRequest;
-import com.uade.back.dto.catalog.ProductUpdateRequest;
-import com.uade.back.service.catalog.ProductService;
-=======
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.uade.back.dto.catalog.ProductRequest;
 import com.uade.back.dto.catalog.ProductResponse;
 import com.uade.back.service.product.ProductService;
->>>>>>> service
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,35 +24,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductController {
 
-<<<<<<< HEAD
-  private final ProductService service;
-
-  @PostMapping("/search")
-  public ResponseEntity<List<ProductResponse>> search(@RequestBody ProductSearchRequest request) {
-    return ResponseEntity.ok(service.search(request));
-  }
-
-  @PostMapping("/by-id")
-  public ResponseEntity<ProductResponse> getById(@RequestBody ProductIdRequest request) {
-    return ResponseEntity.ok(service.getById(request));
-  }
-
-  @PostMapping
-  public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest request) {
-    return ResponseEntity.ok(service.create(request));
-  }
-
-  @PutMapping
-  public ResponseEntity<ProductResponse> update(@RequestBody ProductUpdateRequest request) {
-    return ResponseEntity.ok(service.update(request));
-  }
-
-  @DeleteMapping
-  public ResponseEntity<Void> delete(@RequestBody ProductIdRequest request) {
-    service.delete(request);
-    return ResponseEntity.noContent().build();
-  }
-=======
     private final ProductService service;
 
     @GetMapping
@@ -84,5 +55,4 @@ public class ProductController {
         service.delete(id);
     return ResponseEntity.noContent().build();
     }
->>>>>>> service
 }

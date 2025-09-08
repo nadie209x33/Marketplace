@@ -10,9 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartItem {
-    private Integer id;
+    private Integer id; // List.tlistId
+    private Integer productId;
     private String name;
     private Integer quantity;
-    private Integer price;
-    private Integer lineTotal;
+    private Double price;
+    private Double lineTotal;
 }

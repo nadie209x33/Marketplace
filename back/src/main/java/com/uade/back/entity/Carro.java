@@ -1,6 +1,8 @@
 package com.uade.back.entity;
 
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +18,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Carro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +28,6 @@ public class Carro {
     private Usuario user;
 
     @OneToOne
-    @JoinColumn(name = "list_ID", referencedColumnName = "list_ID")
+    @JoinColumn(name = "list_ID", referencedColumnName = "list_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private List list;
 }

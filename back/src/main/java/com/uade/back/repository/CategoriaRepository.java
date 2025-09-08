@@ -11,4 +11,6 @@ import com.uade.back.entity.Categoria;
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
     Optional<Categoria> findByCatId(Integer catId);
+    java.util.List<Categoria> findByParent(Categoria parent);
+    java.util.List<Categoria> findByParentIsNull();
 }

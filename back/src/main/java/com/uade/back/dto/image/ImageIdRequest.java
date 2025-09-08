@@ -1,2 +1,2 @@
 package com.uade.back.dto.image;
-public record ImageIdRequest(Long id) {}
+public record ImageIdRequest(Integer id) {}

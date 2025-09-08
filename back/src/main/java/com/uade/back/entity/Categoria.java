@@ -7,7 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +29,7 @@ public class Categoria {
     @Column (nullable = false, name = "name" )
     private String name;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "parent_ID")
     private Categoria parent;
 

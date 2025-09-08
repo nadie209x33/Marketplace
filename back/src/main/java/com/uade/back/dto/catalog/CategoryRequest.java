@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//public record CategoryRequest(String name, Long parentId) {}
 @Data
 @Builder
 @NoArgsConstructor

@@ -1,25 +1,25 @@
 package com.uade.back.service.cart;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.uade.back.dto.cart.AddItemRequest;
 import com.uade.back.dto.cart.CartItem;
 import com.uade.back.dto.cart.CartResponse;
 import com.uade.back.dto.cart.UpdateItemRequest;
 import com.uade.back.entity.Carro;
 import com.uade.back.entity.Inventario;
-import com.uade.back.entity.List;
 import com.uade.back.entity.Usuario;
 import com.uade.back.repository.CarritoRepository;
 import com.uade.back.repository.InventarioRepository;
 import com.uade.back.repository.ListRepository;
 import com.uade.back.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -33,13 +33,9 @@ public class CartService {
     private Usuario getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return usuarioRepository.findByUserInfo_Mail(username)
-                .orElseThrow();
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found in database"));
     }
-//  @transactional
-//  public list<ProductResponse> search{
-//  -----------------logica----------------
-//  return
-//}
+
     @Transactional
     public CartResponse getCurrentCart() {
         Usuario user = getCurrentUser();
@@ -52,24 +48,26 @@ public class CartService {
         Usuario user = getCurrentUser();
         Carro cart = getOrCreateCart(user);
 
-        Optional<Inventario> productInventory = inventarioRepository.findById(request.getProductId());
+        Inventario productInventory = inventarioRepository.findById(request.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + request.getProductId()));
         
-        if (productInventory.isEmpty() || productInventory.get().getQuantity() < request.getQuantity()) {
-            throw new RuntimeException();
+        if (productInventory.getQuantity() < request.getQuantity()) {
+            throw new RuntimeException("Insufficient stock for product: " + productInventory.getName());
         }
 
-        Optional<List> existingItem = listRepository.findByListIdAndItem(cart.getList().getListId(), productInventory.get());
+        com.uade.back.entity.List existingItem = listRepository
+                .findByListIdAndItem(cart.getList().getListId(), productInventory)
+                .orElse(null);
 
-        if (existingItem.isPresent()) {
-            List item = existingItem.get();
-            item.setQuantity(item.getQuantity() + request.getQuantity());
-            listRepository.save(item);
+        if (existingItem != null) {
+            existingItem.setQuantity(existingItem.getQuantity() + request.getQuantity());
+            listRepository.save(existingItem);
         } else {
-            List newItem = List.builder()
-            .listId(cart.getList().getListId())
-            .item(productInventory.get())
-            .quantity(request.getQuantity()).build();
-
+            com.uade.back.entity.List newItem = com.uade.back.entity.List.builder()
+                .listId(cart.getList().getListId())
+                .item(productInventory)
+                .quantity(request.getQuantity())
+                .build();
             listRepository.save(newItem);
         }
 
@@ -78,21 +76,26 @@ public class CartService {
 
     @Transactional
     public CartResponse updateItem(Long itemId, UpdateItemRequest request) {
+        if (request.getQuantity() != null && request.getQuantity() == 0) {
+            return removeItem(itemId);
+        }
+
         Usuario user = getCurrentUser();
         Carro cart = getOrCreateCart(user);
 
-        Optional<List> itemToUpdate = listRepository.findById(itemId.intValue());
-        if (itemToUpdate.isEmpty() || !itemToUpdate.get().getListId().equals(cart.getList().getListId())) {
-            throw new RuntimeException();
+        com.uade.back.entity.List itemToUpdate = listRepository.findById(itemId.intValue())
+            .orElseThrow(() -> new RuntimeException("Item not found in cart"));
+
+        if (!itemToUpdate.getListId().equals(cart.getList().getListId())) {
+            throw new RuntimeException("Item does not belong to the current user's cart.");
         }
 
-        List item = itemToUpdate.get();
-        if (item.getItem().getQuantity() < request.getQuantity()) {
-            throw new RuntimeException();
+        if (itemToUpdate.getItem().getQuantity() < request.getQuantity()) {
+            throw new RuntimeException("Insufficient stock");
         }
 
-        item.setQuantity(request.getQuantity());
-        listRepository.save(item);
+        itemToUpdate.setQuantity(request.getQuantity());
+        listRepository.save(itemToUpdate);
 
         return createCartResponse(cart);
     }
@@ -101,6 +104,13 @@ public class CartService {
     public CartResponse removeItem(Long itemId) {
         Usuario user = getCurrentUser();
         Carro cart = getOrCreateCart(user);
+        
+        com.uade.back.entity.List itemToRemove = listRepository.findById(itemId.intValue())
+            .orElseThrow(() -> new RuntimeException("Item not found in cart"));
+
+        if (!itemToRemove.getListId().equals(cart.getList().getListId())) {
+            throw new RuntimeException("Item does not belong to the current user's cart.");
+        }
 
         listRepository.deleteById(itemId.intValue());
 
@@ -111,43 +121,64 @@ public class CartService {
     public CartResponse clear() {
         Usuario user = getCurrentUser();
         Carro cart = getOrCreateCart(user);
-        listRepository.deleteAllByListId(cart.getList().getListId());
+        if (cart.getList() != null && cart.getList().getListId() != null) {
+            listRepository.deleteAllByListId(cart.getList().getListId());
+        }
         return createCartResponse(cart);
     }
-
     
-
     private Carro getOrCreateCart(Usuario user) {
         return carritoRepository.findByUser(user).stream().findFirst().orElseGet(() -> {
-            Carro newCart = new Carro();
-            newCart.setUser(user);
+
+            
             com.uade.back.entity.List newList = new com.uade.back.entity.List();
-            listRepository.save(newList); 
-            newCart.setList(newList);
+            newList.setQuantity(0);
+            com.uade.back.entity.List savedList = listRepository.save(newList); 
+
+            
+            savedList.setListId(savedList.getTlistId());
+            listRepository.save(savedList);
+
+            
+            Carro newCart = Carro.builder()
+                .user(user)
+                .list(savedList)
+                .build();
             return carritoRepository.save(newCart);
         });
     }
 
     private CartResponse createCartResponse(Carro cart) {
-        if (cart.getList() == null) {
-            return new CartResponse(cart.getCarro_ID(), Collections.emptyList(), 0);
+        if (cart.getList() == null || cart.getList().getListId() == null) {
+            return CartResponse.builder()
+                .id(cart.getCarro_ID())
+                .items(Collections.emptyList())
+                .total(0)
+                .build();
         }
 
-        java.util.List<List> items = listRepository.findAllByListId(cart.getList().getListId());
-        java.util.List<CartItem> cartItems = items.stream().map(item -> {
-            CartItem dto = new CartItem();
-            dto.setId(item.getTlistId());
-            dto.setName(item.getItem().getName());
-            dto.setQuantity(item.getQuantity());
-            dto.setPrice(item.getItem().getPrice());
-            dto.setLineTotal(item.getQuantity() * item.getItem().getPrice());
-            return dto;
-        }).collect(Collectors.toList());
+        java.util.List<com.uade.back.entity.List> items = listRepository.findAllByListId(cart.getList().getListId());
+        
+        java.util.List<CartItem> cartItems = items.stream()
+            .filter(item -> item.getItem() != null)
+            .map(item -> CartItem.builder()
+            .id(item.getTlistId())
+            .productId(item.getItem().getItemId())
+            .name(item.getItem().getName())
+            .quantity(item.getQuantity())
+            .price(item.getItem().getPrice())
+            .lineTotal(item.getQuantity() * item.getItem().getPrice())
+            .build()
+        ).collect(Collectors.toList());
 
-        Integer totalPrice = cartItems.stream()
-                              .mapToInt(item -> item.getLineTotal())
+        Double totalPrice = cartItems.stream()
+                              .mapToDouble(CartItem::getLineTotal)
                               .sum();
 
-        return new CartResponse(cart.getCarro_ID(), cartItems, totalPrice);
+        return CartResponse.builder()
+            .id(cart.getCarro_ID())
+            .items(cartItems)
+            .total(totalPrice.intValue())
+            .build();
     }
 }

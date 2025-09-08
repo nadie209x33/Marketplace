@@ -1,0 +1,198 @@
+package com.uade.back.service.order;
+
+import com.uade.back.dto.order.CreateOrderRequest;
+import com.uade.back.dto.order.OrderIdRequest;
+import com.uade.back.dto.order.OrderListRequest;
+import com.uade.back.dto.order.OrderResponse;
+import com.uade.back.entity.*;
+import com.uade.back.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class OrderServiceImpl implements OrderService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final CarritoRepository carritoRepository;
+    private final ListRepository listRepository;
+    private final InventarioRepository inventarioRepository;
+    private final AddressRepository addressRepository;
+    private final DeliveryRepository deliveryRepository;
+    private final PedidoRepository pedidoRepository;
+    private final PagoRepository pagoRepository;
+
+    private Usuario getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByUserInfo_Mail(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found in database"));
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse create(CreateOrderRequest request) {
+        
+        
+        Usuario user = getCurrentUser();
+        if (!user.getActive()) {
+            throw new RuntimeException("User is not active.");
+        }
+        Carro cart = carritoRepository.findByUser(user)
+                .stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("User does not have a cart."));
+
+        
+                
+        Integer listId = cart.getList().getListId();
+        java.util.List<com.uade.back.entity.List> cartItems = listRepository.findAllByListId(listId);
+        
+        if (cartItems.stream().allMatch(item -> item.getItem() == null)) {
+             throw new RuntimeException("Cannot create an order from an empty cart.");
+        }
+
+        double total = 0.0;
+        for (com.uade.back.entity.List item : cartItems) {
+            if (item.getItem() == null) continue; 
+            
+
+            if (item.getQuantity() > item.getItem().getQuantity()) {
+                throw new RuntimeException("Insufficient stock for item: " + item.getItem().getName());
+            }
+            
+            
+
+            total += item.getQuantity() * item.getItem().getPrice();
+        }
+
+        
+        
+        Address address = addressRepository.findById(request.getAddressId())
+                .orElseThrow(() -> new RuntimeException("Address not found."));
+        
+        Delivery delivery = deliveryRepository.findByAddress(address)
+                .orElseGet(() -> deliveryRepository.save(Delivery.builder().address(address).provider("Standard").build()));
+
+        
+                
+
+        Pedido newPedido = Pedido.builder()
+                .usuario(user)
+                .listId(listId)
+                .delivery(delivery)
+                .status(false)
+                .build();
+        Pedido savedPedido = pedidoRepository.save(newPedido);
+
+        
+        
+
+        Pago newPago = Pago.builder()
+                .pedido(savedPedido)
+                .monto((int) total)
+                .medio(request.getPaymentMethod())
+                .timestamp(Instant.now())
+                .status("PENDIENTE")
+                .txId(0)
+                .build();
+        pagoRepository.save(newPago);
+
+        
+        
+        carritoRepository.delete(cart);
+
+        
+        
+        return toOrderResponse(savedPedido, newPago);
+    }
+
+    private OrderResponse toOrderResponse(Pedido pedido, Pago pago) {
+        java.util.List<com.uade.back.entity.List> items = listRepository.findAllByListId(pedido.getListId());
+        
+        java.util.List<OrderResponse.Item> responseItems = items.stream()
+            .filter(item -> item.getItem() != null)
+            .map(item -> OrderResponse.Item.builder()
+                .productId(item.getItem().getItemId())
+                .name(item.getItem().getName())
+                .quantity(item.getQuantity())
+                .price(item.getItem().getPrice())
+                .lineTotal(item.getQuantity() * item.getItem().getPrice())
+                .build()
+            ).collect(java.util.stream.Collectors.toList());
+
+        return OrderResponse.builder()
+            .id(pedido.getPedidoId())
+            .status(pedido.getStatus())
+            .total(pago.getMonto().doubleValue())
+            .items(responseItems)
+            .build();
+    }
+
+    @Override
+    public OrderResponse getById(OrderIdRequest request) {
+        Pedido pedido = pedidoRepository.findById(request.id())
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + request.id()));
+        
+        
+                
+        Pago pago = pagoRepository.findByPedido(pedido).orElseThrow();
+
+        return toOrderResponse(pedido, pago);
+    }
+
+    @Override
+    public List<OrderResponse> getMyOrders(OrderListRequest request) {
+        Usuario user = getCurrentUser();
+        List<Pedido> pedidos = pedidoRepository.findByUsuario(user);
+
+        return pedidos.stream()
+                .map(pedido -> {
+                    
+                    
+                    Pago pago = pagoRepository.findByPedido(pedido).orElseThrow();
+                    return toOrderResponse(pedido, pago);
+                })
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void updatePaymentStatus(Integer pagoId, String newStatus) {
+        
+        Pago pago = pagoRepository.findById(pagoId)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + pagoId));
+
+        
+        pago.setStatus(newStatus);
+        
+        
+        Pedido pedido = pago.getPedido();
+        if ("APROBADO".equalsIgnoreCase(newStatus)) {
+            pedido.setStatus(true);
+
+            
+            java.util.List<com.uade.back.entity.List> items = listRepository.findAllByListId(pedido.getListId());
+            for (com.uade.back.entity.List item : items) {
+                 if (item.getItem() == null) continue;
+                 Inventario inventario = item.getItem();
+                 int newQuantity = inventario.getQuantity() - item.getQuantity();
+                 if (newQuantity < 0) {
+                     throw new IllegalStateException("Stock cannot be negative for item: " + inventario.getName());
+                 }
+                 inventario.setQuantity(newQuantity);
+                 inventarioRepository.save(inventario);
+            }
+
+        } else if ("RECHAZADO".equalsIgnoreCase(newStatus)) {
+            pedido.setStatus(false);
+        }
+        
+        pagoRepository.save(pago);
+        pedidoRepository.save(pedido);
+    }
+}

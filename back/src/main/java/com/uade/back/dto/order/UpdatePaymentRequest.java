@@ -1,17 +1,14 @@
-package com.uade.back.dto.cart;
+package com.uade.back.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateItemRequest {
-
-    private Integer quantity;
-
+public class UpdatePaymentRequest {
+    private String newStatus;
 }
