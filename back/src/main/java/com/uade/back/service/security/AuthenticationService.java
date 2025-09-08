@@ -5,11 +5,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +21,6 @@ import com.uade.back.entity.Usuario;
 import com.uade.back.repository.OTPRepository;
 import com.uade.back.repository.UserInfoRepository;
 import com.uade.back.repository.UsuarioRepository;
-
 
 import lombok.RequiredArgsConstructor;
 
@@ -72,10 +68,15 @@ public class AuthenticationService {
 
                 Otp midotp = otpRepository.save(nuevoOtp);
 
+                com.uade.back.entity.Role role = com.uade.back.entity.Role.USER;
+                if (usuarioRepository.count() == 0) {
+                    role = com.uade.back.entity.Role.ADMIN;
+                }
+
                 Usuario nuevoUsuario = Usuario.builder()
                 .passkey(passwordEncoder.encode(info.getPasskey()))
                 .otp(midotp)
-                .authLevel(com.uade.back.entity.Role.USER)
+                .authLevel(role)
                 .active(true)
                 .userInfo(midui)
                 .build();
