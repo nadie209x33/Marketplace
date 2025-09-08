@@ -51,6 +51,9 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(ProductRequest request) {
+        if (request.getPrice() < 0) {
+            throw new IllegalArgumentException("El precio no puede ser negativo.");
+        }
         Categoria categoria = categoriaRepository.findById(request.getCategoryId())
         .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
@@ -70,6 +73,9 @@ public class ProductService {
 
     @Transactional
     public ProductResponse update(Integer id, ProductRequest request){
+        if (request.getPrice() < 0) {
+            throw new IllegalArgumentException("El precio no puede ser negativo.");
+        }
         Inventario inventario = inventarioRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         Categoria categoria = categoriaRepository.findById(request.getCategoryId())

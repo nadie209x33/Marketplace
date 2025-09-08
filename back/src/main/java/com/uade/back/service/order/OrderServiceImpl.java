@@ -1,19 +1,33 @@
 package com.uade.back.service.order;
 
-import com.uade.back.dto.order.CreateOrderRequest;
-import com.uade.back.dto.order.OrderIdRequest;
-import com.uade.back.dto.order.OrderListRequest;
-import com.uade.back.dto.order.OrderResponse;
-import com.uade.back.entity.*;
-import com.uade.back.repository.*;
-import lombok.RequiredArgsConstructor;
+import java.time.Instant;
+import java.util.List;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
+import com.uade.back.dto.order.CreateOrderRequest;
+import com.uade.back.dto.order.OrderIdRequest;
+import com.uade.back.dto.order.OrderListRequest;
+import com.uade.back.dto.order.OrderResponse;
+import com.uade.back.entity.Address;
+import com.uade.back.entity.Carro;
+import com.uade.back.entity.Delivery;
+import com.uade.back.entity.Inventario;
+import com.uade.back.entity.Pago;
+import com.uade.back.entity.Pedido;
+import com.uade.back.entity.Usuario;
+import com.uade.back.repository.AddressRepository;
+import com.uade.back.repository.CarritoRepository;
+import com.uade.back.repository.DeliveryRepository;
+import com.uade.back.repository.InventarioRepository;
+import com.uade.back.repository.ListRepository;
+import com.uade.back.repository.PagoRepository;
+import com.uade.back.repository.PedidoRepository;
+import com.uade.back.repository.UsuarioRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -85,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
                 .usuario(user)
                 .listId(listId)
                 .delivery(delivery)
-                .status(false)
+                .status("PENDIENTE")
                 .build();
         Pedido savedPedido = pedidoRepository.save(newPedido);
 
@@ -127,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
 
         return OrderResponse.builder()
             .id(pedido.getPedidoId())
-            .status(pedido.getStatus())
+            .status(Boolean.valueOf(pedido.getStatus()))
             .total(pago.getMonto().doubleValue())
             .items(responseItems)
             .build();
@@ -173,7 +187,7 @@ public class OrderServiceImpl implements OrderService {
         
         Pedido pedido = pago.getPedido();
         if ("APROBADO".equalsIgnoreCase(newStatus)) {
-            pedido.setStatus(true);
+            pedido.setStatus("APROBADO");
 
             
             java.util.List<com.uade.back.entity.List> items = listRepository.findAllByListId(pedido.getListId());
@@ -189,7 +203,7 @@ public class OrderServiceImpl implements OrderService {
             }
 
         } else if ("RECHAZADO".equalsIgnoreCase(newStatus)) {
-            pedido.setStatus(false);
+            pedido.setStatus("RECHAZADO");
         }
         
         pagoRepository.save(pago);
