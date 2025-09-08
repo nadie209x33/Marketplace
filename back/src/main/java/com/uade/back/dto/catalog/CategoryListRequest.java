@@ -1,2 +1,2 @@
 package com.uade.back.dto.catalog;
-public record CategoryListRequest(Long parentId, Integer page, Integer size) {}
+public record CategoryListRequest(Integer parentId, Integer page, Integer size) {}
