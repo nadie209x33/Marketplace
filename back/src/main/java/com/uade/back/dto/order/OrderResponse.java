@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderResponse {
     private Integer id;
-    private Boolean status;
+    private String status;
     private Double total;
     private List<Item> items;
 

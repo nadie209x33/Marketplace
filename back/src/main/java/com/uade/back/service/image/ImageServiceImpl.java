@@ -16,7 +16,9 @@ import com.uade.back.dto.image.ImageIdRequest;
 import com.uade.back.dto.image.ImageResponse;
 import com.uade.back.dto.image.ImageUploadRequest;
 import com.uade.back.entity.Image;
+import com.uade.back.entity.Inventario;
 import com.uade.back.repository.ImageRepository;
+import com.uade.back.repository.InventarioRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,15 +27,21 @@ import lombok.RequiredArgsConstructor;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
+    private final InventarioRepository inventarioRepository;
 
     @Override
     @Transactional
     public ImageResponse upload(MultipartFile file, ImageUploadRequest meta) {
         try {
+            Inventario inventario = inventarioRepository.findById(meta.productId())
+                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + meta.productId()));
+
             Blob blob = new SerialBlob(file.getBytes());
             Image image = Image.builder()
                     .image(blob)
                     .build();
+            
+            image.setInventario(inventario);
             Image savedImage = imageRepository.save(image);
             return new ImageResponse(savedImage.getImgId());
         } catch (SQLException | IOException e) {

@@ -19,6 +19,8 @@ import com.uade.back.entity.Inventario;
 import com.uade.back.entity.Pago;
 import com.uade.back.entity.Pedido;
 import com.uade.back.entity.Usuario;
+import com.uade.back.entity.enums.OrderStatus;
+import com.uade.back.entity.enums.PaymentStatus;
 import com.uade.back.repository.AddressRepository;
 import com.uade.back.repository.CarritoRepository;
 import com.uade.back.repository.DeliveryRepository;
@@ -87,16 +89,20 @@ public class OrderServiceImpl implements OrderService {
         Address address = addressRepository.findById(request.getAddressId())
                 .orElseThrow(() -> new RuntimeException("Address not found."));
         
+        boolean isUserAddress = user.getUserInfo().getAddresses().stream()
+                .anyMatch(a -> a.getAddressId().equals(request.getAddressId()));
+        
+        if (!isUserAddress) {
+            throw new RuntimeException("Address does not belong to the user.");
+        }
+
         Delivery delivery = deliveryRepository.findByAddress(address)
                 .orElseGet(() -> deliveryRepository.save(Delivery.builder().address(address).provider("Standard").build()));
-
-        
-                
 
         Pedido newPedido = Pedido.builder()
                 .usuario(user)
                 .delivery(delivery)
-                .status("PENDIENTE")
+                .status(OrderStatus.PLACED)
                 .build();
         
         List<com.uade.back.entity.List> orderItems = cartItems.stream()
@@ -117,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
                 .monto((int) total)
                 .medio(request.getPaymentMethod())
                 .timestamp(Instant.now())
-                .status("PENDIENTE")
+                .status(PaymentStatus.WAITING)
                 .txId(0)
                 .build();
         pagoRepository.save(newPago);
@@ -148,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
 
         return OrderResponse.builder()
             .id(pedido.getPedidoId())
-            .status(Boolean.valueOf(pedido.getStatus()))
+            .status(pedido.getStatus().name())
             .total(pago.getMonto().doubleValue())
             .items(responseItems)
             .build();
@@ -188,13 +194,13 @@ public class OrderServiceImpl implements OrderService {
         Pago pago = pagoRepository.findById(pagoId)
                 .orElseThrow(() -> new RuntimeException("Payment not found with id: " + pagoId));
 
-        
-        pago.setStatus(newStatus);
+        PaymentStatus paymentStatus = PaymentStatus.valueOf(newStatus.toUpperCase());
+        pago.setStatus(paymentStatus);
         
         
         Pedido pedido = pago.getPedido();
-        if ("APROBADO".equalsIgnoreCase(newStatus)) {
-            pedido.setStatus("APROBADO");
+        if (paymentStatus == PaymentStatus.SUCCESS) {
+            pedido.setStatus(OrderStatus.START_DELIVERY);
 
             
             java.util.List<com.uade.back.entity.List> items = pedido.getItems();
@@ -209,11 +215,22 @@ public class OrderServiceImpl implements OrderService {
                  inventarioRepository.save(inventario);
             }
 
-        } else if ("RECHAZADO".equalsIgnoreCase(newStatus)) {
-            pedido.setStatus("RECHAZADO");
+        } else if (paymentStatus == PaymentStatus.FAILED) {
+            pedido.setStatus(OrderStatus.PLACED);
         }
         
         pagoRepository.save(pago);
+        pedidoRepository.save(pedido);
+    }
+
+    @Override
+    @Transactional
+    public void updateDeliveryStatus(Integer orderId, String newStatus) {
+        Pedido pedido = pedidoRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+        OrderStatus orderStatus = OrderStatus.valueOf(newStatus.toUpperCase());
+        pedido.setStatus(orderStatus);
         pedidoRepository.save(pedido);
     }
 }

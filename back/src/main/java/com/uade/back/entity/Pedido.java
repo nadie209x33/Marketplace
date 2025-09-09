@@ -1,8 +1,12 @@
 package com.uade.back.entity;
 
+import com.uade.back.entity.enums.OrderStatus;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -41,6 +45,7 @@ public class Pedido {
     @JoinColumn(name = "delivery_ID", referencedColumnName = "delivery_ID")
     private Delivery delivery;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")
-    private String status;
+    private OrderStatus status;
 }

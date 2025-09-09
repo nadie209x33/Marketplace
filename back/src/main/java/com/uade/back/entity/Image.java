@@ -7,6 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,9 +26,14 @@ public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="img_ID")
+    @Column(name = "img_ID")
     private Integer imgId;
 
-    @Column (nullable = false, name = "URI")
+    @Lob
+    @Column(name = "image")
     private Blob image;
+
+    @ManyToOne
+    @JoinColumn(name = "item_ID")
+    private Inventario inventario;
 }

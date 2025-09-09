@@ -12,4 +12,5 @@ public interface OrderService {
   OrderResponse getById(OrderIdRequest request);
   List<OrderResponse> getMyOrders(OrderListRequest request);
     void updatePaymentStatus(Integer pagoId, String newStatus);
+    void updateDeliveryStatus(Integer orderId, String newStatus);
 }

@@ -14,6 +14,7 @@ import com.uade.back.dto.order.CreateOrderRequest;
 import com.uade.back.dto.order.OrderIdRequest;
 import com.uade.back.dto.order.OrderListRequest;
 import com.uade.back.dto.order.OrderResponse;
+import com.uade.back.dto.order.UpdateDeliveryStatusRequest;
 import com.uade.back.dto.order.UpdatePaymentRequest;
 import com.uade.back.service.order.OrderService;
 
@@ -46,6 +47,14 @@ public class OrderController {
       @PathVariable Integer pagoId,
       @RequestBody UpdatePaymentRequest request) {
     service.updatePaymentStatus(pagoId, request.getNewStatus());
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{orderId}/delivery-status")
+  public ResponseEntity<Void> updateDeliveryStatus(
+      @PathVariable Integer orderId,
+      @RequestBody UpdateDeliveryStatusRequest request) {
+    service.updateDeliveryStatus(orderId, request.getNewStatus());
     return ResponseEntity.noContent().build();
   }
 }
