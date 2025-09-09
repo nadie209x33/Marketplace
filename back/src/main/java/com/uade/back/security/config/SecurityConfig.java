@@ -41,6 +41,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/payment/**").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/**/delivery-status").hasAuthority(Role.ADMIN.name())
                         .requestMatchers("/categories/**").hasAnyAuthority(Role.USER.name())
+                        .requestMatchers(
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/swagger-resources/**",
+                                        "/webjars/**"
+                                        ).permitAll()
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
