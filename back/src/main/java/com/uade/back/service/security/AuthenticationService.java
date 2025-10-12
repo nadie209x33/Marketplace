@@ -188,11 +188,11 @@ public class AuthenticationService {
 
         public UserDTO getMe() {
                 var userContext = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                var user = usuarioRepository.findById(userContext.getId()).orElseThrow();
+                var user = usuarioRepository.findById(userContext.getUser_ID()).orElseThrow();
                 var userInfo = userInfoRepository.findById(user.getUserInfo().getUserInfoId()).orElseThrow();
 
                 return UserDTO.builder()
-                        .id(user.getId().toString())
+                        .id(user.getUser_ID().toString())
                         .name(userInfo.getFirstName() + " " + userInfo.getLastName())
                         .email(userInfo.getMail())
                         .roles(List.of(user.getAuthLevel().name()))
