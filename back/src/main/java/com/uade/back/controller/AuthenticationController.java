@@ -1,11 +1,13 @@
 package com.uade.back.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.uade.back.dto.UserDTO;
 import com.uade.back.dto.auth.AuthenticationRequest;
 import com.uade.back.dto.auth.AuthenticationResponse;
 import com.uade.back.dto.user.NewUserDTO;
@@ -30,5 +32,10 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> me() {
+        return ResponseEntity.ok(service.getMe());
     }
 }

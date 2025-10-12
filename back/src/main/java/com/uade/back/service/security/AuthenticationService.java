@@ -3,14 +3,17 @@ package com.uade.back.service.security;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.uade.back.dto.UserDTO;
 import com.uade.back.dto.auth.AuthenticationRequest;
 import com.uade.back.dto.auth.AuthenticationResponse;
 import com.uade.back.dto.user.NewUserDTO;
@@ -181,5 +184,18 @@ public class AuthenticationService {
                 return AuthenticationResponse.builder()
                                 .accessToken(jwtToken)
                                 .build();
+        }
+
+        public UserDTO getMe() {
+                var userContext = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                var user = usuarioRepository.findById(userContext.getId()).orElseThrow();
+                var userInfo = userInfoRepository.findById(user.getUserInfo().getUserInfoId()).orElseThrow();
+
+                return UserDTO.builder()
+                        .id(user.getId().toString())
+                        .name(userInfo.getFirstName() + " " + userInfo.getLastName())
+                        .email(userInfo.getMail())
+                        .roles(List.of(user.getAuthLevel().name()))
+                        .build();
         }
 }

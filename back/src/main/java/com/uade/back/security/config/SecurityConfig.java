@@ -34,7 +34,9 @@ public class SecurityConfig {
         http
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/auth/**").permitAll()
+                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/auth/register").permitAll()
+                        .requestMatchers("/api/v1/auth/authenticate").permitAll()
+                        .requestMatchers("/api/v1/auth/me").authenticated()
                         .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
