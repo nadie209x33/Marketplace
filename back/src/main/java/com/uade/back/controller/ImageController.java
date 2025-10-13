@@ -28,6 +28,16 @@ public class ImageController {
     return ResponseEntity.ok(service.upload(file, meta));
   }
 
+  @GetMapping("/{id}")
+    public ResponseEntity<Resource> getImageById(@PathVariable Integer id) {
+        ImageIdRequest request = new ImageIdRequest(id);
+        Resource resource = service.download(request);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(resource);
+    }
+
   @PostMapping("/download")
   public ResponseEntity<Resource> download(@RequestBody ImageIdRequest request) {
     Resource res = service.download(request);
