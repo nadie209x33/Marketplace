@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uade.back.dto.image.ImageIdRequest;
 import com.uade.back.dto.image.ImageResponse;
 import com.uade.back.dto.image.ImageUploadRequest;
@@ -20,12 +22,21 @@ import lombok.RequiredArgsConstructor;
 public class ImageController {
 
   private final ImageService service;
+  private final ObjectMapper objectMapper;
 
   @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ImageResponse> upload(
+  public ResponseEntity<?> upload(
       @RequestPart("file") MultipartFile file,
-      @RequestPart("meta") ImageUploadRequest meta) {
-    return ResponseEntity.ok(service.upload(file, meta));
+      @RequestPart("meta") String metaJson) {
+        
+    ImageUploadRequest meta;
+    try {
+      meta = objectMapper.readValue(metaJson, ImageUploadRequest.class);
+    } catch (JsonProcessingException e) {
+      return ResponseEntity.badRequest().body("Invalid JSON format for 'meta' part.");
+    }
+    ImageResponse imageResponse = service.upload(file, meta);
+    return ResponseEntity.ok(imageResponse);
   }
 
   @GetMapping("/{id}")
