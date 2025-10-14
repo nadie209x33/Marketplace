@@ -42,6 +42,7 @@ public class ImageServiceImpl implements ImageService {
                     .build();
             
             image.setInventario(inventario);
+            inventario.getImages().add(image); // Keep both sides of the relationship in sync
             Image savedImage = imageRepository.save(image);
             return new ImageResponse(savedImage.getImgId());
         } catch (SQLException | IOException e) {

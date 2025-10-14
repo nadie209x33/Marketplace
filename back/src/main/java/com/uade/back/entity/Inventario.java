@@ -8,8 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -49,12 +48,7 @@ public class Inventario {
     @JoinColumn(name = "cat_ID", referencedColumnName = "cat_ID")
     private Categoria categoria;
 
-    @ManyToMany
-    @JoinTable(
-        name = "Image_List",
-        joinColumns = @JoinColumn(name = "item_ID"),
-        inverseJoinColumns = @JoinColumn(name = "img_ID")
-    )
+    @OneToMany(mappedBy = "inventario", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Image> images = new java.util.ArrayList<>();
 
