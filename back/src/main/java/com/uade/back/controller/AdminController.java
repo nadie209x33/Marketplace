@@ -3,6 +3,7 @@ package com.uade.back.controller;
 import com.uade.back.dto.OtpDTO;
 import com.uade.back.dto.order.OrderDTO;
 import com.uade.back.dto.user.AdminUserUpdateDTO;
+import com.uade.back.dto.user.UserListDTO;
 import com.uade.back.service.order.OrderService;
 import com.uade.back.service.security.AuthenticationService;
 import com.uade.back.service.user.UserService;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -46,5 +49,13 @@ public class AdminController {
     @GetMapping("/orders")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserListDTO>> getAllUsers() {
+        List<UserListDTO> users = userService.getAllUsers().stream()
+                .map(UserListDTO::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(users);
     }
 }

@@ -84,4 +84,9 @@ public class UserServiceImpl implements UserService {
         userInfoRepository.save(userInfo);
         usuarioRepository.save(user);
     }
+
+    @Override
+    public java.util.List<com.uade.back.entity.Usuario> getAllUsers() {
+        return usuarioRepository.findAll();
+    }
 }
