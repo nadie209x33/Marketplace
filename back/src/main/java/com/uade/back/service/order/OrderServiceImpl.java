@@ -1,5 +1,7 @@
 package com.uade.back.service.order;
 
+import com.uade.back.dto.order.OrderDTO;
+import com.uade.back.dto.order.OrderItemDTO;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.uade.back.dto.order.CreateOrderRequest;
 import com.uade.back.dto.order.OrderIdRequest;
-import com.uade.back.dto.order.OrderListRequest;
 import com.uade.back.dto.order.OrderResponse;
 import com.uade.back.entity.Address;
 import com.uade.back.entity.Carro;
@@ -173,18 +174,40 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getMyOrders(OrderListRequest request) {
+    public List<OrderDTO> getMyOrders() {
         Usuario user = getCurrentUser();
         List<Pedido> pedidos = pedidoRepository.findByUsuario(user);
 
         return pedidos.stream()
-                .map(pedido -> {
-                    
-                    
-                    Pago pago = pagoRepository.findByPedido(pedido).orElseThrow();
-                    return toOrderResponse(pedido, pago);
-                })
-                .collect(java.util.stream.Collectors.toList());
+                .map(this::toOrderDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        List<Pedido> pedidos = pedidoRepository.findAll();
+        return pedidos.stream()
+                .map(this::toOrderDTO)
+                .collect(Collectors.toList());
+    }
+
+    private OrderDTO toOrderDTO(Pedido pedido) {
+        List<OrderItemDTO> itemDTOs = pedido.getItems().stream()
+                .map(item -> OrderItemDTO.builder()
+                        .productName(item.getItem().getName())
+                        .quantity(item.getQuantity())
+                        .price(item.getItem().getPrice())
+                        .build())
+                .collect(Collectors.toList());
+
+        return OrderDTO.builder()
+                .orderId(pedido.getPedidoId())
+                .userEmail(pedido.getUsuario().getUsername())
+                .deliveryProvider(pedido.getDelivery().getProvider())
+                .deliveryAddress(pedido.getDelivery().getAddress().getStreet())
+                .status(pedido.getStatus())
+                .items(itemDTOs)
+                .build();
     }
 
     @Override

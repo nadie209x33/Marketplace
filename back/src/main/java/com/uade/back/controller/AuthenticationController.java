@@ -1,5 +1,7 @@
 package com.uade.back.controller;
 
+import com.uade.back.dto.auth.AccountActivationDTO;
+import com.uade.back.dto.auth.PasswordChangeDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,5 +39,17 @@ public class AuthenticationController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> me() {
         return ResponseEntity.ok(service.getMe());
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody PasswordChangeDTO request) {
+        service.changePassword(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/activate")
+    public ResponseEntity<Void> activateAccount(@RequestBody AccountActivationDTO request) {
+        service.activateAccountByEmail(request);
+        return ResponseEntity.noContent().build();
     }
 }

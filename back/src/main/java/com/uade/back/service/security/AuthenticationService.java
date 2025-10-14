@@ -6,6 +6,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+import com.uade.back.dto.OtpDTO;
+import com.uade.back.dto.auth.AccountActivationDTO;
+import com.uade.back.dto.auth.PasswordChangeDTO;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -198,4 +201,51 @@ public class AuthenticationService {
                         .roles(List.of(user.getAuthLevel().name()))
                         .build();
         }
+
+    public void changePassword(PasswordChangeDTO passwordChangeDTO) {
+        Usuario user = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid old password");
+        }
+
+        user.setPasskey(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
+        usuarioRepository.save(user);
+    }
+
+    public OtpDTO adminCheckOtp(Integer userId) {
+        Usuario user = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (user.getOtp() == null) {
+            return new OtpDTO("No OTP found");
+        }
+        return new OtpDTO(user.getOtp().getOtp());
+    }
+
+    @Transactional
+    public OtpDTO adminRegenerateOtp(Integer userId) {
+        Usuario user = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getOtp() != null) {
+            otpRepository.delete(user.getOtp());
+        }
+
+        Otp newOtp = Otp.builder().otp(this.otpGen(8)).timestamp(Instant.now()).build();
+        Otp savedOtp = otpRepository.save(newOtp);
+        user.setOtp(savedOtp);
+        usuarioRepository.save(user);
+
+        return new OtpDTO(savedOtp.getOtp());
+    }
+
+    @Transactional
+    public void activateAccountByEmail(AccountActivationDTO accountActivationDTO) {
+        UserInfo userInfo = userInfoRepository.findByMail(accountActivationDTO.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Usuario user = usuarioRepository.findByUserInfo_UserInfoId(userInfo.getUserInfoId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        activateAccount(user.getUser_ID(), accountActivationDTO.getOtp());
+    }
 }

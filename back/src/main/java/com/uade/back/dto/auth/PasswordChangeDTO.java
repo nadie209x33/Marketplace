@@ -1,4 +1,4 @@
-package com.uade.back.dto;
+package com.uade.back.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OtpDTO {
-    private String otp;
+public class PasswordChangeDTO {
+    private String oldPassword;
+    private String newPassword;
 }

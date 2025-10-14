@@ -1,4 +1,4 @@
-package com.uade.back.dto;
+package com.uade.back.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OtpDTO {
-    private String otp;
+public class OrderItemDTO {
+    private String productName;
+    private int quantity;
+    private double price;
 }

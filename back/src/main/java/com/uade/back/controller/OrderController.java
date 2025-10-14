@@ -2,7 +2,9 @@ package com.uade.back.controller;
 
 import java.util.List;
 
+import com.uade.back.dto.order.OrderDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.back.dto.order.CreateOrderRequest;
 import com.uade.back.dto.order.OrderIdRequest;
-import com.uade.back.dto.order.OrderListRequest;
 import com.uade.back.dto.order.OrderResponse;
 import com.uade.back.dto.order.UpdateDeliveryStatusRequest;
 import com.uade.back.dto.order.UpdatePaymentRequest;
@@ -37,9 +38,9 @@ public class OrderController {
     return ResponseEntity.ok(service.getById(request));
   }
 
-  @PostMapping("/search")
-  public ResponseEntity<List<OrderResponse>> myOrders(@RequestBody OrderListRequest request) {
-    return ResponseEntity.ok(service.getMyOrders(request));
+  @GetMapping("/my-orders")
+  public ResponseEntity<List<OrderDTO>> myOrders() {
+    return ResponseEntity.ok(service.getMyOrders());
   }
 
   @PatchMapping("/payment/{pagoId}")
