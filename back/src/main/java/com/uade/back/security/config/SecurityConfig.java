@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/users/**").hasAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/addresses/**").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/payment/**").hasAuthority(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/**/delivery-status").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/{orderId}/delivery-status").hasAuthority(Role.ADMIN.name())
                         .requestMatchers("/categories/**").hasAnyAuthority(Role.USER.name())
                         .requestMatchers(
                                         "/swagger-ui.html",
