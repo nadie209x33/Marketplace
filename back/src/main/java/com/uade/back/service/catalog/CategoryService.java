@@ -5,8 +5,8 @@ import com.uade.back.dto.catalog.*;
 
 public interface CategoryService {
   List<CategoryResponse> findAll(CategoryListRequest request);
-  CategoryResponse findById(CategoryIdRequest request);
+  CategoryResponse findById(Integer id);
   CategoryResponse create(CategoryRequest request);
   CategoryResponse update(CategoryUpdateRequest request);
-  void delete(CategoryIdRequest request);
+  void delete(Integer id);
 }

@@ -34,9 +34,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse findById(CategoryIdRequest request) {
-        Categoria categoria = categoriaRepository.findById(request.id())
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + request.id()));
+    public CategoryResponse findById(Integer id) {
+        Categoria categoria = categoriaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
         return toCategoryResponse(categoria);
     }
 
@@ -95,10 +95,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void delete(CategoryIdRequest request) {
-        if (!categoriaRepository.existsById(request.id())) {
-            throw new RuntimeException("Category not found with id: " + request.id());
+    public void delete(Integer id) {
+        if (!categoriaRepository.existsById(id)) {
+            throw new RuntimeException("Category not found with id: " + id);
         }
-        categoriaRepository.deleteById(request.id());
+        categoriaRepository.deleteById(id);
     }
 }

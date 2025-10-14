@@ -4,13 +4,14 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uade.back.dto.catalog.CategoryIdRequest;
 import com.uade.back.dto.catalog.CategoryListRequest;
 import com.uade.back.dto.catalog.CategoryRequest;
 import com.uade.back.dto.catalog.CategoryResponse;
@@ -31,9 +32,9 @@ public class CategoryController {
     return ResponseEntity.ok(service.findAll(request));
   }
 
-  @PostMapping("/by-id")
-  public ResponseEntity<CategoryResponse> get(@RequestBody CategoryIdRequest request) {
-    return ResponseEntity.ok(service.findById(request));
+  @GetMapping("/byid/{id}")
+  public ResponseEntity<CategoryResponse> get(@PathVariable Integer id) {
+    return ResponseEntity.ok(service.findById(id));
   }
 
   @PostMapping
@@ -46,9 +47,9 @@ public class CategoryController {
     return ResponseEntity.ok(service.update(request));
   }
 
-  @DeleteMapping
-  public ResponseEntity<Void> delete(@RequestBody CategoryIdRequest request) {
-    service.delete(request);
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    service.delete(id);
     return ResponseEntity.noContent().build();
   }
 }
