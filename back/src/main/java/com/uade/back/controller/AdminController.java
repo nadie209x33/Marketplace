@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.back.dto.OtpDTO;
+import com.uade.back.dto.catalog.ProductPageResponse;
 import com.uade.back.dto.catalog.ProductResponse;
 import com.uade.back.dto.order.OrderDTO;
 import com.uade.back.dto.user.AdminUserUpdateDTO;
@@ -65,7 +66,7 @@ public class AdminController {
     }
 
     @GetMapping("/products/all")
-    public ResponseEntity<List<ProductResponse>> searchAdmin(
+    public ResponseEntity<ProductPageResponse> searchAdmin(
         @RequestParam(required = false) Integer categoryId,
         @RequestParam(required = false) String q,
         @RequestParam(required = false) Boolean active,

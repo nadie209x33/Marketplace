@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.uade.back.dto.catalog.ProductPageResponse;
 import com.uade.back.dto.catalog.ProductRequest;
 import com.uade.back.dto.catalog.ProductResponse;
 import com.uade.back.entity.Categoria;
@@ -24,12 +25,30 @@ public class ProductService {
     private final CategoriaRepository categoriaRepository;
 
     @Transactional(readOnly = true)
-    public List<ProductResponse> search(Integer categoryId, String q, int page, int size) {
+    public ProductPageResponse search(Integer categoryId, String q, int page, int size) {
+        List<Integer> categoryIds = null;
+        if (categoryId != null) {
+            categoryIds = getAllCategoryIds(categoryId);
+        }
+
         Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
-        Page<Inventario> results = inventarioRepository.search(categoryId, q, pageable);
-        return results.getContent().stream()
+        Page<Inventario> results = inventarioRepository.search(categoryIds, q, pageable);
+        List<ProductResponse> products = results.getContent().stream()
                 .map(this::toProductResponse)
                 .collect(java.util.stream.Collectors.toList());
+
+        return new ProductPageResponse(products, results.getTotalPages());
+    }
+
+    private List<Integer> getAllCategoryIds(Integer categoryId) {
+        List<Integer> categoryIds = new java.util.ArrayList<>();
+        categoryIds.add(categoryId);
+
+        List<Categoria> children = categoriaRepository.findByParent(categoriaRepository.findById(categoryId).orElse(null));
+        for (Categoria child : children) {
+            categoryIds.addAll(getAllCategoryIds(child.getCatId()));
+        }
+        return categoryIds;
     }
 
     private ProductResponse toProductResponse(Inventario inventario) {
@@ -104,11 +123,13 @@ public class ProductService {
     }  
 
     @Transactional(readOnly = true)
-    public List<ProductResponse> searchAdmin(Integer categoryId, String q, Boolean active, int page, int size) {
+    public ProductPageResponse searchAdmin(Integer categoryId, String q, Boolean active, int page, int size) {
         Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
         Page<Inventario> results = inventarioRepository.searchAdmin(categoryId, q, active, pageable);
-        return results.getContent().stream()
+        List<ProductResponse> products = results.getContent().stream()
                 .map(this::toProductResponse)
                 .collect(java.util.stream.Collectors.toList());
+
+        return new ProductPageResponse(products, results.getTotalPages());
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.uade.back.dto.catalog.ProductPageResponse;
 import com.uade.back.dto.catalog.ProductRequest;
 import com.uade.back.dto.catalog.ProductResponse;
 import com.uade.back.service.product.ProductService;
@@ -27,7 +28,7 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> search(
+    public ResponseEntity<ProductPageResponse> search(
         @RequestParam(required = false) Integer categoryId,
         @RequestParam(required = false) String q,
         @RequestParam(defaultValue = "0") Integer page,
