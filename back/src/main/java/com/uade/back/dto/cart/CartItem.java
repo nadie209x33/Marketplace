@@ -16,4 +16,5 @@ public class CartItem {
     private Integer quantity;
     private Double price;
     private Double lineTotal;
+    private Integer imageId;
 }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uade.back.dto.OtpDTO;
 import com.uade.back.dto.catalog.ProductPageResponse;
-import com.uade.back.dto.catalog.ProductResponse;
 import com.uade.back.dto.order.OrderDTO;
 import com.uade.back.dto.user.AdminUserUpdateDTO;
 import com.uade.back.dto.user.UserListDTO;

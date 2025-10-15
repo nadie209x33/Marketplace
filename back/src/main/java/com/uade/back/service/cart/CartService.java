@@ -139,15 +139,22 @@ public class CartService {
 
         java.util.List<CartItem> cartItems = cart.getItems().stream()
             .filter(item -> item.getItem() != null)
-            .map(item -> CartItem.builder()
-            .id(item.getTlistId())
-            .productId(item.getItem().getItemId())
-            .name(item.getItem().getName())
-            .quantity(item.getQuantity())
-            .price(item.getItem().getPrice())
-            .lineTotal(item.getQuantity() * item.getItem().getPrice())
-            .build()
-        ).collect(Collectors.toList());
+            .map(item -> {
+                Integer imageId = null;
+                if (item.getItem().getImages() != null && !item.getItem().getImages().isEmpty()) {
+                    imageId = item.getItem().getImages().get(0).getImgId();
+                }
+                return CartItem.builder()
+                    .id(item.getTlistId())
+                    .productId(item.getItem().getItemId())
+                    .name(item.getItem().getName())
+                    .quantity(item.getQuantity())
+                    .price(item.getItem().getPrice())
+                    .lineTotal(item.getQuantity() * item.getItem().getPrice())
+                    .imageId(imageId)
+                    .build();
+            })
+            .collect(Collectors.toList());
 
         Double totalPrice = cartItems.stream()
                               .mapToDouble(CartItem::getLineTotal)
