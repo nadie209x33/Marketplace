@@ -89,6 +89,7 @@ public class ProductService {
         inventario.setPrice(request.getPrice());
         inventario.setQuantity(request.getStock());
         inventario.setCategoria(categoria);
+        inventario.setActive(request.getActive());
 
         Inventario actualizado = inventarioRepository.save(inventario);
 
