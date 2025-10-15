@@ -14,6 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,4 +50,11 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "status")
     private OrderStatus status;
+
+    @Column(nullable = false, name = "creation_timestamp")
+    private Instant creationTimestamp;
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Pago> pagos = new java.util.ArrayList<>();
 }

@@ -58,4 +58,11 @@ public class OrderController {
     service.updateDeliveryStatus(orderId, request.getNewStatus());
     return ResponseEntity.noContent().build();
   }
+
+  @PostMapping("/{orderId}/retry-payment")
+  public ResponseEntity<OrderResponse> retryPayment(
+      @PathVariable Integer orderId,
+      @RequestBody com.uade.back.dto.order.RetryPaymentRequest request) {
+    return ResponseEntity.ok(service.retryPayment(orderId, request));
+  }
 }

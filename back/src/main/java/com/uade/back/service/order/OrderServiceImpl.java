@@ -22,6 +22,8 @@ import com.uade.back.entity.Pedido;
 import com.uade.back.entity.Usuario;
 import com.uade.back.entity.enums.OrderStatus;
 import com.uade.back.entity.enums.PaymentStatus;
+import com.uade.back.entity.Role;
+import org.springframework.security.access.AccessDeniedException;
 import com.uade.back.repository.AddressRepository;
 import com.uade.back.repository.CarritoRepository;
 import com.uade.back.repository.DeliveryRepository;
@@ -104,6 +106,7 @@ public class OrderServiceImpl implements OrderService {
                 .usuario(user)
                 .delivery(delivery)
                 .status(OrderStatus.PLACED)
+                .creationTimestamp(Instant.now())
                 .build();
         
         List<com.uade.back.entity.List> orderItems = cartItems.stream()
@@ -113,21 +116,18 @@ public class OrderServiceImpl implements OrderService {
                 .build())
             .collect(Collectors.toList());
         newPedido.setItems(orderItems);
-        
-        Pedido savedPedido = pedidoRepository.save(newPedido);
-
-        
-        
 
         Pago newPago = Pago.builder()
-                .pedido(savedPedido)
+                .pedido(newPedido)
                 .monto((int) total)
                 .medio(request.getPaymentMethod())
                 .timestamp(Instant.now())
                 .status(PaymentStatus.WAITING)
                 .txId(0)
                 .build();
-        pagoRepository.save(newPago);
+        newPedido.getPagos().add(newPago);
+
+        Pedido savedPedido = pedidoRepository.save(newPedido);
 
         
         
@@ -136,7 +136,7 @@ public class OrderServiceImpl implements OrderService {
 
         
         
-        return toOrderResponse(savedPedido, newPago);
+        return toOrderResponse(savedPedido, savedPedido.getPagos().get(savedPedido.getPagos().size() - 1));
     }
 
     private OrderResponse toOrderResponse(Pedido pedido, Pago pago) {
@@ -165,10 +165,13 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse getById(OrderIdRequest request) {
         Pedido pedido = pedidoRepository.findById(request.id())
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + request.id()));
-        
-        
-                
-        Pago pago = pagoRepository.findByPedido(pedido).orElseThrow();
+
+        Usuario currentUser = getCurrentUser();
+        if (!pedido.getUsuario().getUser_ID().equals(currentUser.getUser_ID()) && !currentUser.getAuthLevel().equals(Role.ADMIN)) {
+            throw new AccessDeniedException("You are not authorized to access this order.");
+        }
+
+        Pago pago = pedido.getPagos().stream().max((p1, p2) -> p1.getTimestamp().compareTo(p2.getTimestamp())).orElseThrow();
 
         return toOrderResponse(pedido, pago);
     }
@@ -192,7 +195,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderDTO toOrderDTO(Pedido pedido) {
-        Pago pago = pagoRepository.findByPedido(pedido)
+        Pago pago = pedido.getPagos().stream().max((p1, p2) -> p1.getTimestamp().compareTo(p2.getTimestamp()))
                 .orElseThrow(() -> new RuntimeException("Pago not found for pedido id: " + pedido.getPedidoId()));
 
         List<OrderItemDTO> itemDTOs = pedido.getItems().stream()
@@ -214,6 +217,8 @@ public class OrderServiceImpl implements OrderService {
                 .total(pago.getMonto().doubleValue())
                 .items(itemDTOs)
                 .paymentId(pago.getPagoId())
+                .orderTimestamp(pedido.getCreationTimestamp())
+                .paymentTimestamp(pago.getTimestamp())
                 .build();
     }
 
@@ -262,5 +267,59 @@ public class OrderServiceImpl implements OrderService {
         OrderStatus orderStatus = OrderStatus.valueOf(newStatus.toUpperCase());
         pedido.setStatus(orderStatus);
         pedidoRepository.save(pedido);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse retryPayment(Integer orderId, com.uade.back.dto.order.RetryPaymentRequest request) {
+        Pedido pedido = pedidoRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+        Usuario currentUser = getCurrentUser();
+        if (!pedido.getUsuario().getUser_ID().equals(currentUser.getUser_ID())) {
+            throw new AccessDeniedException("You are not authorized to access this order.");
+        }
+
+        Pago latestPago = pedido.getPagos().stream().max((p1, p2) -> p1.getTimestamp().compareTo(p2.getTimestamp()))
+                .orElseThrow(() -> new RuntimeException("Payment not found for order id: " + orderId));
+
+        if (latestPago.getStatus() != PaymentStatus.FAILED) {
+            throw new IllegalStateException("Payment retry is only allowed for failed payments.");
+        }
+
+        Pago newPago = Pago.builder()
+                .pedido(pedido)
+                .monto(latestPago.getMonto())
+                .medio(request.getPaymentMethod())
+                .timestamp(Instant.now())
+                .status(PaymentStatus.WAITING)
+                .txId(0)
+                .build();
+        pedido.getPagos().add(newPago);
+
+        Pedido savedPedido = pedidoRepository.save(pedido);
+
+        return toOrderResponse(savedPedido, newPago);
+    }
+
+    @Override
+    public List<com.uade.back.dto.order.PaymentDTO> getOrderPayments(Integer orderId) {
+        Pedido pedido = pedidoRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
+
+        return pedido.getPagos().stream()
+                .map(this::toPaymentDTO)
+                .collect(Collectors.toList());
+    }
+
+    private com.uade.back.dto.order.PaymentDTO toPaymentDTO(Pago pago) {
+        return com.uade.back.dto.order.PaymentDTO.builder()
+                .paymentId(pago.getPagoId())
+                .amount(pago.getMonto())
+                .paymentMethod(pago.getMedio())
+                .timestamp(pago.getTimestamp())
+                .status(pago.getStatus())
+                .transactionId(pago.getTxId())
+                .build();
     }
 }

@@ -73,4 +73,9 @@ public class AdminController {
         @RequestParam(defaultValue = "20") Integer size) {
         return ResponseEntity.ok(productService.searchAdmin(categoryId, q, active, page, size));
     }
+
+    @GetMapping("/orders/{orderId}/payments")
+    public ResponseEntity<List<com.uade.back.dto.order.PaymentDTO>> getOrderPayments(@PathVariable Integer orderId) {
+        return ResponseEntity.ok(orderService.getOrderPayments(orderId));
+    }
 }
