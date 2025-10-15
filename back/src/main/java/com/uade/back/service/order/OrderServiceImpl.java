@@ -206,11 +206,14 @@ public class OrderServiceImpl implements OrderService {
                         .build())
                 .collect(Collectors.toList());
 
+        Address address = pedido.getDelivery().getAddress();
+        String fullAddress = address.getStreet() + ", " + address.getApt() + ", " + address.getPostalCode() + ", " + address.getOthers();
+
         return OrderDTO.builder()
                 .orderId(pedido.getPedidoId())
                 .userEmail(pedido.getUsuario().getUsername())
                 .deliveryProvider(pedido.getDelivery().getProvider())
-                .deliveryAddress(pedido.getDelivery().getAddress().getStreet())
+                .deliveryAddress(fullAddress)
                 .orderStatus(pedido.getStatus())
                 .paymentStatus(pago.getStatus())
                 .paymentMethod(pago.getMedio())
