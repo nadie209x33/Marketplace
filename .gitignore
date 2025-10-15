@@ -36,3 +36,8 @@ db/
 
 *.kate*
 back/src/main/resources/application-local.properties
+
+
+## HTTPS KEYS ##
+
+*.p12
