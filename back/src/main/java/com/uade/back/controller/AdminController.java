@@ -1,7 +1,7 @@
 package com.uade.back.controller;
 
 import com.uade.back.dto.OtpDTO;
-import com.uade.back.dto.order.AdminOrderDTO;
+import com.uade.back.dto.order.OrderDTO;
 import com.uade.back.dto.user.AdminUserUpdateDTO;
 import com.uade.back.dto.user.UserListDTO;
 import com.uade.back.service.order.OrderService;
@@ -47,8 +47,8 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<List<AdminOrderDTO>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrdersAdmin());
+    public ResponseEntity<List<OrderDTO>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
     }
 
     @GetMapping("/users")
