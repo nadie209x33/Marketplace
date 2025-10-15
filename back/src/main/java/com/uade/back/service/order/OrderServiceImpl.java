@@ -1,5 +1,6 @@
 package com.uade.back.service.order;
 
+import com.uade.back.dto.order.AdminOrderDTO;
 import com.uade.back.dto.order.OrderDTO;
 import com.uade.back.dto.order.OrderItemDTO;
 import java.time.Instant;
@@ -183,13 +184,6 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<OrderDTO> getAllOrders() {
-        List<Pedido> pedidos = pedidoRepository.findAll();
-        return pedidos.stream()
-                .map(this::toOrderDTO)
-                .collect(Collectors.toList());
-    }
 
     private OrderDTO toOrderDTO(Pedido pedido) {
         List<OrderItemDTO> itemDTOs = pedido.getItems().stream()
@@ -244,6 +238,39 @@ public class OrderServiceImpl implements OrderService {
         
         pagoRepository.save(pago);
         pedidoRepository.save(pedido);
+    }
+
+    @Override
+    public List<AdminOrderDTO> getAllOrdersAdmin() {
+        List<Pedido> pedidos = pedidoRepository.findAll();
+        return pedidos.stream()
+                .map(this::toAdminOrderDTO)
+                .collect(Collectors.toList());
+    }
+
+    private AdminOrderDTO toAdminOrderDTO(Pedido pedido) {
+        Pago pago = pagoRepository.findByPedido(pedido)
+                .orElseThrow(() -> new RuntimeException("Pago not found for pedido id: " + pedido.getPedidoId()));
+
+        List<OrderItemDTO> itemDTOs = pedido.getItems().stream()
+                .map(item -> OrderItemDTO.builder()
+                        .productName(item.getItem().getName())
+                        .quantity(item.getQuantity())
+                        .price(item.getItem().getPrice())
+                        .build())
+                .collect(Collectors.toList());
+
+        return AdminOrderDTO.builder()
+                .orderId(pedido.getPedidoId())
+                .userEmail(pedido.getUsuario().getUsername())
+                .deliveryProvider(pedido.getDelivery().getProvider())
+                .deliveryAddress(pedido.getDelivery().getAddress().getStreet())
+                .orderStatus(pedido.getStatus())
+                .paymentStatus(pago.getStatus())
+                .paymentMethod(pago.getMedio())
+                .total(pago.getMonto().doubleValue())
+                .items(itemDTOs)
+                .build();
     }
 
     @Override

@@ -47,8 +47,8 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderDTO>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    public ResponseEntity<List<AdminOrderDTO>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrdersAdmin());
     }
 
     @GetMapping("/users")
