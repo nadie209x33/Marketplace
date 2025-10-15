@@ -1,7 +1,7 @@
 package com.uade.back.controller;
 
 import com.uade.back.dto.OtpDTO;
-import com.uade.back.dto.order.OrderDTO;
+import com.uade.back.dto.order.AdminOrderDTO;
 import com.uade.back.dto.user.AdminUserUpdateDTO;
 import com.uade.back.dto.user.UserListDTO;
 import com.uade.back.service.order.OrderService;
