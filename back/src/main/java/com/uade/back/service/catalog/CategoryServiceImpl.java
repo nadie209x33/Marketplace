@@ -6,8 +6,12 @@ import com.uade.back.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -100,5 +104,33 @@ public class CategoryServiceImpl implements CategoryService {
             throw new RuntimeException("Category not found with id: " + id);
         }
         categoriaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<CategoryTreeDTO> getCategoryTree() {
+        List<Categoria> allCategories = categoriaRepository.findAll();
+        Map<Integer, CategoryTreeDTO> categoryMap = allCategories.stream()
+                .map(cat -> CategoryTreeDTO.builder()
+                        .id(cat.getCatId())
+                        .name(cat.getName())
+                        .children(new ArrayList<>())
+                        .build())
+                .collect(Collectors.toMap(CategoryTreeDTO::getId, cat -> cat));
+
+        List<CategoryTreeDTO> rootCategories = new ArrayList<>();
+
+        allCategories.forEach(cat -> {
+            CategoryTreeDTO node = categoryMap.get(cat.getCatId());
+            if (cat.getParent() == null) {
+                rootCategories.add(node);
+            } else {
+                CategoryTreeDTO parentNode = categoryMap.get(cat.getParent().getCatId());
+                if (parentNode != null) {
+                    parentNode.getChildren().add(node);
+                }
+            }
+        });
+
+        return rootCategories;
     }
 }

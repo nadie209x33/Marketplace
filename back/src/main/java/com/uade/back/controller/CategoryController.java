@@ -2,6 +2,7 @@ package com.uade.back.controller;
 
 import java.util.List;
 
+import com.uade.back.dto.catalog.CategoryTreeDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,5 +52,10 @@ public class CategoryController {
   public ResponseEntity<Void> delete(@PathVariable Integer id) {
     service.delete(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/tree")
+  public ResponseEntity<List<CategoryTreeDTO>> getCategoryTree() {
+    return ResponseEntity.ok(service.getCategoryTree());
   }
 }

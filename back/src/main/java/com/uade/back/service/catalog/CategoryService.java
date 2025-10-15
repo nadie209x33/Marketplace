@@ -9,4 +9,5 @@ public interface CategoryService {
   CategoryResponse create(CategoryRequest request);
   CategoryResponse update(CategoryUpdateRequest request);
   void delete(Integer id);
+  List<CategoryTreeDTO> getCategoryTree();
 }
