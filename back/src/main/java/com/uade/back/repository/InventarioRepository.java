@@ -16,7 +16,14 @@ public interface InventarioRepository extends JpaRepository<Inventario, Integer>
     Optional<Inventario>findByItemId(Integer itemId);
 
     @Query("SELECT i FROM Inventario i WHERE " +
+           "(i.active = true) AND " +
            "(:categoryId IS NULL OR i.categoria.catId = :categoryId) AND " +
            "(:q IS NULL OR LOWER(i.name) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :q, '%')))")
     Page<Inventario> search(@Param("categoryId") Integer categoryId, @Param("q") String q, Pageable pageable);
+
+    @Query("SELECT i FROM Inventario i WHERE " +
+            "(:categoryId IS NULL OR i.categoria.catId = :categoryId) AND " +
+            "(:q IS NULL OR LOWER(i.name) LIKE LOWER(CONCAT('%', :q, '%')) OR LOWER(i.description) LIKE LOWER(CONCAT('%', :q, '%'))) AND " +
+            "(:active IS NULL OR i.active = :active)")
+    Page<Inventario> searchAdmin(@Param("categoryId") Integer categoryId, @Param("q") String q, @Param("active") Boolean active, Pageable pageable);
 }

@@ -41,6 +41,7 @@ public class ProductService {
                 .categoryId(inventario.getCategoria().getCatId())
                 .stock(inventario.getQuantity())
                 .imageIds(inventario.getImages().stream().map(Image::getImgId).collect(java.util.stream.Collectors.toList()))
+                .active(inventario.getActive())
                 .build();
     }
 
@@ -100,4 +101,13 @@ public class ProductService {
             .orElseThrow(() -> new RuntimeException("El producto no existe"));
         inventarioRepository.delete(inventario);
     }  
+
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchAdmin(Integer categoryId, String q, Boolean active, int page, int size) {
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        Page<Inventario> results = inventarioRepository.searchAdmin(categoryId, q, active, pageable);
+        return results.getContent().stream()
+                .map(this::toProductResponse)
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

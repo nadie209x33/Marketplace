@@ -20,5 +20,6 @@ public class ProductResponse {
     private Integer categoryId;
     private Integer stock;
     private List<Integer> imageIds;
+    private Boolean active;
 
 }

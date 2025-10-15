@@ -1,12 +1,8 @@
 package com.uade.back.controller;
 
-import com.uade.back.dto.OtpDTO;
-import com.uade.back.dto.order.OrderDTO;
-import com.uade.back.dto.user.AdminUserUpdateDTO;
-import com.uade.back.dto.user.UserListDTO;
-import com.uade.back.service.order.OrderService;
-import com.uade.back.service.security.AuthenticationService;
-import com.uade.back.service.user.UserService;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,10 +10,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.uade.back.dto.OtpDTO;
+import com.uade.back.dto.catalog.ProductResponse;
+import com.uade.back.dto.order.OrderDTO;
+import com.uade.back.dto.user.AdminUserUpdateDTO;
+import com.uade.back.dto.user.UserListDTO;
+import com.uade.back.service.order.OrderService;
+import com.uade.back.service.product.ProductService;
+import com.uade.back.service.security.AuthenticationService;
+import com.uade.back.service.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +33,7 @@ public class AdminController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
     private final OrderService orderService;
+    private final ProductService productService;
 
     @PutMapping("/users/{userId}")
     public ResponseEntity<Void> adminUpdateUser(@PathVariable Integer userId, @RequestBody AdminUserUpdateDTO adminUserUpdateDTO) {
@@ -57,5 +62,15 @@ public class AdminController {
                 .map(UserListDTO::fromEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/products/all")
+    public ResponseEntity<List<ProductResponse>> searchAdmin(
+        @RequestParam(required = false) Integer categoryId,
+        @RequestParam(required = false) String q,
+        @RequestParam(required = false) Boolean active,
+        @RequestParam(defaultValue = "0") Integer page,
+        @RequestParam(defaultValue = "20") Integer size) {
+        return ResponseEntity.ok(productService.searchAdmin(categoryId, q, active, page, size));
     }
 }
