@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/addresses/**").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/payment/**").hasAuthority(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/orders/{orderId}/delivery-status").hasAuthority(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.POST, "/api/v1/orders/{orderId}/retry-payment").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/orders/{orderId}/retry-payment").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers("/categories/**").hasAnyAuthority(Role.USER.name())
                         .requestMatchers(
                                         "/swagger-ui.html",
