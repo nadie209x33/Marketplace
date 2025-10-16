@@ -41,13 +41,15 @@ public class AddressController {
     }
 
     @PutMapping("/{addressId}")
-    public ResponseEntity<AddressDto> updateAddress(@PathVariable Integer addressId, @RequestBody CreateAddressRequest addressRequest) {
+    public ResponseEntity<AddressDto> updateAddress(@PathVariable Integer addressId,
+            @RequestBody CreateAddressRequest addressRequest) {
         return ResponseEntity.ok(addressService.updateAddress(addressId, addressRequest));
     }
 
+    // ⬇️ ESTE es el método del snippet
     @DeleteMapping("/{addressId}")
     public ResponseEntity<Void> deleteAddress(@PathVariable Integer addressId) {
         addressService.deleteAddress(addressId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); // 204
     }
 }
