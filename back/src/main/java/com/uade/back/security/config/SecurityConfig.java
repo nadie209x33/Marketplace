@@ -64,28 +64,28 @@ public class SecurityConfig {
                         "/api/v1/auth/me",
                         "/api/v1/auth/change-password"
                     )
-                    .hasAuthority(Role.USER.name())
+                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                     .requestMatchers(
                         HttpMethod.GET,
                         "/api/v1/products/{productId}",
                         "/api/v1/categories/byid/{categoryId}"
                     )
-                    .hasAuthority(Role.USER.name())
+                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                     .requestMatchers("/api/v1/cart/**")
-                    .hasAuthority(Role.USER.name())
+                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                     .requestMatchers("/api/v1/addresses/**")
-                    .hasAuthority(Role.USER.name())
+                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                     .requestMatchers(HttpMethod.POST, "/api/v1/orders")
-                    .hasAuthority(Role.USER.name())
+                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                     .requestMatchers(HttpMethod.GET, "/api/v1/orders/my-orders")
-                    .hasAuthority(Role.USER.name())
+                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                     .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/orders/{orderId}/retry-payment"
                     )
-                    .hasAuthority(Role.USER.name())
+                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                     .requestMatchers(HttpMethod.PUT, "/api/v1/users/me")
-                    .hasAuthority(Role.USER.name())
+                    .hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                     // Admin endpoints
                     .requestMatchers("/api/v1/admin/**")
                     .hasAuthority(Role.ADMIN.name())
