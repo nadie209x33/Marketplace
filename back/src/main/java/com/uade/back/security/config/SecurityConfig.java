@@ -114,6 +114,8 @@ public class SecurityConfig {
                     .hasAuthority(Role.ADMIN.name())
                     .requestMatchers(HttpMethod.GET, "/api/v1/cupones")
                     .hasAuthority(Role.ADMIN.name())
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/cupones/**")
+                    .hasAuthority(Role.ADMIN.name())
                     .requestMatchers(
                         HttpMethod.PATCH,
                         "/api/v1/orders/{orderId}/delivery-status"

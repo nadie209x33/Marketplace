@@ -90,4 +90,42 @@ public class CuponService {
             .activo(cupon.getActivo())
             .build();
     }
+
+    @Transactional
+    public CuponResponse updateCupon(
+        Integer id,
+        com.uade.back.dto.cupon.CuponUpdateRequest request
+    ) {
+        Cupon cupon = cuponRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Cupón no encontrado."));
+
+        if (request.getCodigo() != null) {
+            cuponRepository
+                .findByCodigo(request.getCodigo())
+                .ifPresent(existingCupon -> {
+                    if (!existingCupon.getCuponId().equals(id)) {
+                        throw new IllegalArgumentException(
+                            "El código de cupón ya existe."
+                        );
+                    }
+                });
+            cupon.setCodigo(request.getCodigo());
+        }
+        if (request.getPorcentajeDescuento() != null) {
+            cupon.setPorcentajeDescuento(request.getPorcentajeDescuento());
+        }
+        if (request.getFechaExpiracion() != null) {
+            cupon.setFechaExpiracion(request.getFechaExpiracion());
+        }
+        if (request.getUsosMaximos() != null) {
+            cupon.setUsosMaximos(request.getUsosMaximos());
+        }
+        if (request.getActivo() != null) {
+            cupon.setActivo(request.getActivo());
+        }
+
+        Cupon updatedCupon = cuponRepository.save(cupon);
+        return toCuponResponse(updatedCupon);
+    }
 }

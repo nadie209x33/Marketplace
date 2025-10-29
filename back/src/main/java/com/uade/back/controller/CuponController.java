@@ -37,6 +37,14 @@ public class CuponController {
         );
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<com.uade.back.dto.cupon.CuponResponse> updateCupon(
+        @PathVariable Integer id,
+        @RequestBody com.uade.back.dto.cupon.CuponUpdateRequest request
+    ) {
+        return ResponseEntity.ok(cuponService.updateCupon(id, request));
+    }
+
     @PostMapping("/validar")
     public ResponseEntity<ValidarCuponResponse> validarCupon(
         @RequestBody ValidarCuponRequest request
