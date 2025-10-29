@@ -110,6 +110,10 @@ public class SecurityConfig {
                     .hasAuthority(Role.ADMIN.name())
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/images")
                     .hasAuthority(Role.ADMIN.name())
+                    .requestMatchers(HttpMethod.POST, "/api/v1/cupones")
+                    .hasAuthority(Role.ADMIN.name())
+                    .requestMatchers(HttpMethod.GET, "/api/v1/cupones")
+                    .hasAuthority(Role.ADMIN.name())
                     .requestMatchers(
                         HttpMethod.PATCH,
                         "/api/v1/orders/{orderId}/delivery-status"

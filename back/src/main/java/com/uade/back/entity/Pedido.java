@@ -1,7 +1,6 @@
 package com.uade.back.entity;
 
 import com.uade.back.entity.enums.OrderStatus;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,8 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
 import java.time.Instant;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,7 +36,8 @@ public class Pedido {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pedido_ID")
     @Builder.Default
-    private java.util.List<com.uade.back.entity.List> items = new java.util.ArrayList<>();
+    private java.util.List<com.uade.back.entity.List> items =
+        new java.util.ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_ID", referencedColumnName = "user_ID")
@@ -57,4 +57,11 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Pago> pagos = new java.util.ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "cupon_id")
+    private Cupon cupon;
+
+    @Column(name = "monto_descuento")
+    private Double montoDescuento;
 }
