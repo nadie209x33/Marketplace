@@ -162,6 +162,15 @@ public class CartService {
         return createCartResponse(cart);
     }
 
+    @Transactional
+    public CartResponse removeCoupon() {
+        Usuario user = getCurrentUser();
+        Carro cart = getOrCreateCart(user);
+        cart.setCupon(null);
+        carritoRepository.save(cart);
+        return createCartResponse(cart);
+    }
+
     private Carro getOrCreateCart(Usuario user) {
         return carritoRepository
             .findByUser(user)

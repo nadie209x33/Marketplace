@@ -60,4 +60,9 @@ public class CartController {
     ) {
         return ResponseEntity.ok(service.aplicarCupon(request));
     }
+
+    @DeleteMapping("/cupon")
+    public ResponseEntity<CartResponse> removeCoupon() {
+        return ResponseEntity.ok(service.removeCoupon());
+    }
 }
